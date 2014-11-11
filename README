@@ -1,0 +1,33 @@
+
+Short version: To build the dependencies for the BES handlers used
+with Hyrax, run 'make' in this directory. The Makefile assumes that
+the environment variable 'prefix' has been set and points to the root
+of the directory where you are building Hyrax (it does not have to be,
+but that's the assumption). The Makfile will compile, test and install
+all of the dependencies in $prefix/deps. For each of the handlers, use
+the --with-* option for its configure script to set the build. For
+example, for the hdf4 handler, use 
+
+	 ./configure --with-hdf4=$prefix/deps
+
+Note that most people who build Hyrax from source will want to set the
+prefix to a specific directory, so that ption would be included as
+well (--prefix=$prefix), and the PATH environment variable should
+nominally be set to $prefix/bin.
+
+---------------------------------------------------------------------
+
+Notes
+
+I modified the Makefile so that the dependency libraries, etc., are 
+installed in $prefix/deps and not $prefix/deps/<package>-<version> so
+that the module build can be told to look in one place and/or the system
+default locations. 11/11/14
+
+The Gridfields library SVN repo is at
+https://gridfields.googlecode.com/svn/trunk/clib. Do not use the code
+in our SVN repo. jhrg 3/28/14
+
+Note: I started a Makefile - just a plain Makefile, not automake - and
+have checked it in. It's not complete, but shows another way to build
+these dependent/third-party packages. jhrg 11/6/12
