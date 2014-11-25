@@ -23,8 +23,9 @@ clean: $(deps_clean)
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.9.4.tar \
-	    --exclude \*~ --exclude .svn hyrax-dependencies)
+	(cd ../ && tar --create --file hyrax-dependencies-1.9.5.tar \
+	 --exclude=.git --exclude='*~' --exclude='\._*' \
+	 hyrax-dependencies)
 
 # The names of the source code distribution files and and the dirs
 # they unpack to.
