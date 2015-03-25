@@ -8,9 +8,16 @@
 # been set and that the directory $prefix/deps is the destination for
 # these packages.
 
+.PHONY: $(deps)
 deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 
-.PHONY: $(deps)
+# The 'deps' are all of the dependencies hyrax/bes needs. rpmdeps are
+# the libraries we link with statically so that we can include features
+# in the BES rpm even though these dependencies are not part of any rpm
+# distribution. 
+#
+# consider adding (3/24/15): gdal gridfields fits
+rpmdeps = hdfeos
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -18,12 +25,15 @@ deps_really_clean = $(deps:%=%-really-clean)
 all:
 	for d in $(deps); do $(MAKE) $(MFLAGS) $$d; done
 
+rpm:
+	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
+
 clean: $(deps_clean)
 
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.9.5.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.10.tar \
 	 --exclude=.git --exclude='*~' --exclude='\._*' \
 	 hyrax-dependencies)
 
