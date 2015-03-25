@@ -25,7 +25,7 @@ deps_really_clean = $(deps:%=%-really-clean)
 all:
 	for d in $(deps); do $(MAKE) $(MFLAGS) $$d; done
 
-rpm:
+for-rpm:
 	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
