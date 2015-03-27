@@ -7,6 +7,9 @@
 # This Makefile assumes that the environment variable 'prefix' has
 # been set and that the directory $prefix/deps is the destination for
 # these packages.
+#
+# Note that you can pass in extra flags for the configure scripts 
+# using CONFIGURE_FLAGS=...opts on the command line.
 
 .PHONY: $(deps)
 deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
@@ -17,7 +20,8 @@ deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 # distribution. 
 #
 # consider adding (3/24/15): gdal gridfields fits
-rpmdeps = hdfeos
+.PHONY: $(rpmdeps)
+rpmdeps = hdfeos gdal gridfields fits
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -92,7 +96,7 @@ $(jpeg_src)-stamp:
 	echo timestamp > $(jpeg_src)-stamp
 
 jpeg-configure-stamp:  $(jpeg_src)-stamp
-	(cd $(jpeg_src) && ./configure --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
+	(cd $(jpeg_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
 	echo timestamp > jpeg-configure-stamp
 
 jpeg-compile-stamp: jpeg-configure-stamp
@@ -199,7 +203,8 @@ $(gdal_src)-stamp:
 	echo timestamp > $(gdal_src)-stamp
 
 gdal-configure-stamp:  $(gdal_src)-stamp
-	(cd $(gdal_src) && ./configure --prefix=$(gdal_prefix) --with-openjpeg=$(openjpeg_prefix))
+	(cd $(gdal_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
+	--prefix=$(gdal_prefix) --with-openjpeg=$(openjpeg_prefix))
 	echo timestamp > gdal-configure-stamp
 
 gdal-compile-stamp: gdal-configure-stamp
@@ -235,7 +240,8 @@ $(gridfields_src)-stamp:
 	echo timestamp > $(gridfields_src)-stamp
 
 gridfields-configure-stamp:  $(gridfields_src)-stamp
-	(cd $(gridfields_src) && ./configure --disable-netcdf --prefix=$(gridfields_prefix))
+	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) --disable-netcdf \
+	--prefix=$(gridfields_prefix))
 	echo timestamp > gridfields-configure-stamp
 
 gridfields-compile-stamp: gridfields-configure-stamp
@@ -269,8 +275,9 @@ $(hdf4_src)-stamp:
 	echo timestamp > $(hdf4_src)-stamp
 
 hdf4-configure-stamp:  $(hdf4_src)-stamp
-	(cd $(hdf4_src) && ./configure --disable-fortran --enable-production --enable-shared \
-		--disable-netcdf --with-jpeg=$(jpeg_prefix) --prefix=$(hdf4_prefix))
+	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
+	--disable-fortran --enable-production --disable-netcdf		\
+	--with-pic --with-jpeg=$(jpeg_prefix) --prefix=$(hdf4_prefix))
 	echo timestamp > hdf4-configure-stamp
 
 hdf4-compile-stamp: hdf4-configure-stamp
@@ -290,10 +297,9 @@ hdf4-really-clean: hdf4-clean
 	-rm $(hdf4_src)-stamp
 	-rm -rf $(hdf4_src)
 
-#	-rm -rf $(hdf4_prefix)
-
 .PHONY: hdf4
-hdf4: jpeg hdf4-install-stamp
+hdf4: jpeg 
+	$(MAKE) $(MFLAGS) hdf4-install-stamp
 
 # HDF EOS2 
 hdfeos_src=$(src)/$(hdfeos)
@@ -304,8 +310,10 @@ $(hdfeos_src)-stamp:
 	echo timestamp > $(hdfeos_src)-stamp
 
 hdfeos-configure-stamp:  $(hdfeos_src)-stamp
-	(cd $(hdfeos_src) && ./configure CC=$(hdf4_prefix)/bin/h4cc --disable-fortran --enable-production \
-		--with-pic --enable-install-include --with-hdf4=$(hdf4_prefix) --prefix=$(hdfeos_prefix))
+	(cd $(hdfeos_src) && ./configure CC=$(hdf4_prefix)/bin/h4cc	\
+	$(CONFIGURE_FLAGS) --disable-fortran --enable-production	\
+	--with-pic --enable-install-include --with-hdf4=$(hdf4_prefix)	\
+	--prefix=$(hdfeos_prefix))
 	echo timestamp > hdfeos-configure-stamp
 
 hdfeos-compile-stamp: hdfeos-configure-stamp
@@ -328,7 +336,8 @@ hdfeos-really-clean: hdfeos-clean
 #	-rm -rf $(hdfeos_prefix)
 
 .PHONY: hdfeos
-hdfeos: hdf4 hdfeos-install-stamp
+hdfeos: hdf4
+	$(MAKE) $(MFLAGS) hdfeos-install-stamp
 
 # HDF5 
 hdf5_src=$(src)/$(hdf5)
@@ -339,7 +348,7 @@ $(hdf5_src)-stamp:
 	echo timestamp > $(hdf5_src)-stamp
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
-	(cd $(hdf5_src) && ./configure --prefix=$(hdf5_prefix))
+	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(hdf5_prefix))
 	echo timestamp > hdf5-configure-stamp
 
 hdf5-compile-stamp: hdf5-configure-stamp
@@ -373,7 +382,9 @@ $(netcdf4_src)-stamp:
 	echo timestamp > $(netcdf4_src)-stamp
 
 netcdf4-configure-stamp:  $(netcdf4_src)-stamp
-	(cd $(netcdf4_src) && ./configure --prefix=$(netcdf4_prefix) CPPFLAGS=-I$(hdf5_prefix)/include LDFLAGS=-L$(hdf5_prefix)/lib )
+	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
+	--prefix=$(netcdf4_prefix) CPPFLAGS=-I$(hdf5_prefix)/include	\
+	LDFLAGS=-L$(hdf5_prefix)/lib )
 	echo timestamp > netcdf4-configure-stamp
 
 netcdf4-compile-stamp: netcdf4-configure-stamp
@@ -407,7 +418,7 @@ $(fits_src)-stamp:
 	echo timestamp > $(fits_src)-stamp
 
 fits-configure-stamp:  $(fits_src)-stamp
-	(cd $(fits_src) && ./configure --prefix=$(fits_prefix))
+	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(fits_prefix))
 	echo timestamp > fits-configure-stamp
 
 fits-compile-stamp: fits-configure-stamp
@@ -446,8 +457,8 @@ icu-configure-stamp:  $(src)/$(icu)-stamp
 	elif uname -a | grep Linux; then OS="linux"; \
 	else OS="unknown"; fi && \
 	if test "$OS" = "osx"; then ./runConfigureICU MacOSX --prefix=$(icu_prefix) --disable-layout --disable-samples; \
-	elif test "$OS" = "linux"; then ./runConfigureICU Linux --prefix=$(icu_prefix) --disable-layout --disable-samples; \
-	else ./configure --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
+	elif test "$OS" = "linux"; then ./runConfigureICU Linux $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; \
+	else ./configure $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
 	echo timestamp > icu-configure-stamp
 
 icu-compile-stamp: icu-configure-stamp
