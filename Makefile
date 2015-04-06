@@ -23,14 +23,23 @@ deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 .PHONY: $(rpmdeps)
 rpmdeps = hdfeos gdal gridfields fits
 
+.PHONY: $(allstaticdeps)
+all_static_deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5	\
+netcdf4 fits
+
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
 
 all:
 	for d in $(deps); do $(MAKE) $(MFLAGS) $$d; done
 
+# for both of these targets you should also set 
+# CONFIGURE_FLAGS=--disable-shared when you call make
 for-rpm:
 	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
+
+for-static-rpm:
+	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
 
