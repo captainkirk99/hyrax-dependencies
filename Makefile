@@ -24,8 +24,7 @@ deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 rpmdeps = hdfeos gdal gridfields fits
 
 .PHONY: $(allstaticdeps)
-all_static_deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits
+all_static_deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -38,6 +37,10 @@ all:
 for-rpm:
 	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
 
+# The difference between this and 'all' is that icu is not built.
+# I want to avoid statically linking with that. Also, this does
+# not yet work - netcdf4 and hdf5 need to have their builds 
+# tweaked still. jhrg 4/7/15
 for-static-rpm:
 	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
 
@@ -46,7 +49,7 @@ clean: $(deps_clean)
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.10.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.11.tar \
 	 --exclude=.git --exclude='*~' --exclude='\._*' \
 	 hyrax-dependencies)
 
