@@ -329,8 +329,13 @@ hdf4-compile-stamp: hdf4-configure-stamp
 	echo timestamp > hdf4-compile-stamp
 
 # Force -j1 for install
+# The copies of ncdump and ncgen installed by hdf4 are evil ;-)
+# remove them to avoid in advertanly using them in tests (e.g.,
+# fonc's tests. jhrg 4/10/15
 hdf4-install-stamp: hdf4-compile-stamp
 	(cd $(hdf4_src) && $(MAKE) $(MFLAGS) -j1 install)
+	-rm $(hdf4_prefix)/bin/ncdump
+	-rm $(hdf4_prefix)/bin/ncgen
 	echo timestamp > hdf4-install-stamp
 
 hdf4-clean:
