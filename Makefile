@@ -12,19 +12,17 @@
 # using CONFIGURE_FLAGS=...opts on the command line.
 
 .PHONY: $(deps)
-deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
+deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 
 # The 'deps' are all of the dependencies hyrax/bes needs. rpmdeps are
 # the libraries we link with statically so that we can include features
 # in the BES rpm even though these dependencies are not part of any rpm
 # distribution. 
-#
-# consider adding (3/24/15): gdal gridfields fits
 .PHONY: $(rpmdeps)
-rpmdeps = hdfeos gdal gridfields fits
+rpmdeps = bison hdfeos gdal gridfields fits
 
 .PHONY: $(allstaticdeps)
-all_static_deps = cmake jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
+all_static_deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -58,6 +56,9 @@ dist: really-clean
 
 cmake=cmake-2.8.12.2
 cmake_dist=cmake-2.8.12.2.tar.gz
+
+bison=bison-3.0.4
+bison_dist=bison-3.0.4.tar.xz
 
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
@@ -172,6 +173,37 @@ cmake-really-clean: cmake-clean
 
 .PHONY: cmake
 cmake: cmake-install-stamp
+
+# Bison 3 (Needed by libdap)
+bison_src=$(src)/$(bison)
+bison_prefix=$(prefix)/deps
+
+$(bison_src)-stamp:
+	tar -xJf downloads/$(bison_dist) -C $(src)
+	echo timestamp > $(bison_src)-stamp
+
+bison-configure-stamp:  $(bison_src)-stamp
+	(cd $(bison_src) && ./configure --prefix=$(bison_prefix))
+	echo timestamp > bison-configure-stamp
+
+bison-compile-stamp: bison-configure-stamp
+	(cd $(bison_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > bison-compile-stamp
+
+bison-install-stamp: bison-compile-stamp
+	(cd $(bison_src) && $(MAKE) $(MFLAGS) install)
+	echo timestamp > bison-install-stamp
+
+bison-clean:
+	-rm bison-*-stamp
+	-(cd  $(bison_src) && $(MAKE) $(MFLAGS) clean)
+
+bison-really-clean: bison-clean
+	-rm $(src)/bison-*-stamp	
+	-rm -rf $(bison_src)
+
+.PHONY: bison
+bison: bison-install-stamp
 
 # OpenJPEG
 openjpeg_src=$(src)/$(openjpeg)
