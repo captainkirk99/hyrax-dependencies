@@ -47,7 +47,7 @@ clean: $(deps_clean)
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.11.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.11.1.tar \
 	 --exclude=.git --exclude='*~' --exclude='\._*' \
 	 hyrax-dependencies)
 
