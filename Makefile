@@ -21,7 +21,7 @@ deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits i
 .PHONY: $(rpmdeps)
 rpmdeps = bison hdfeos gdal gridfields fits
 
-.PHONY: $(allstaticdeps)
+.PHONY: $(all_static_deps)
 all_static_deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 deps_clean = $(deps:%=%-clean)
@@ -33,13 +33,18 @@ all:
 # for both of these targets you should also set 
 # CONFIGURE_FLAGS=--disable-shared when you call make
 for-rpm:
+	@if test -z "$$CONFIGURE_FLAGS"; then \
+		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
 	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
 
 # The difference between this and 'all' is that icu is not built.
 # I want to avoid statically linking with that. Also, this does
 # not yet work - netcdf4 and hdf5 need to have their builds 
 # tweaked still. jhrg 4/7/15
+# Done. This now works. Don't forget CONFIGURE_FLAGS. jhrg 5/6/15
 for-static-rpm:
+	@if test -z "$$CONFIGURE_FLAGS"; then \
+		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
 	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
@@ -214,7 +219,7 @@ $(openjpeg_src)-stamp:
 	echo timestamp > $(openjpeg_src)-stamp
 
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
-	(cd $(openjpeg_src) && $(cmake_prefix)/bin/cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC" -DBUILD_SHARED_LIBS:bool=off)
+	(cd $(openjpeg_src) && $(cmake_prefix)/bin/cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -285,7 +290,7 @@ $(gridfields_src)-stamp:
 
 gridfields-configure-stamp:  $(gridfields_src)-stamp
 	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) --disable-netcdf \
-	--prefix=$(gridfields_prefix))
+	--prefix=$(gridfields_prefix) CXXFLAGS="-fPIC -O2")
 	echo timestamp > gridfields-configure-stamp
 
 gridfields-compile-stamp: gridfields-configure-stamp
@@ -397,7 +402,8 @@ $(hdf5_src)-stamp:
 	echo timestamp > $(hdf5_src)-stamp
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
-	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(hdf5_prefix))
+	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS="-fPIC -O2" \
+	 --prefix=$(hdf5_prefix))
 	echo timestamp > hdf5-configure-stamp
 
 hdf5-compile-stamp: hdf5-configure-stamp
@@ -433,7 +439,7 @@ $(netcdf4_src)-stamp:
 netcdf4-configure-stamp:  $(netcdf4_src)-stamp
 	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
 	--prefix=$(netcdf4_prefix) CPPFLAGS=-I$(hdf5_prefix)/include	\
-	LDFLAGS=-L$(hdf5_prefix)/lib )
+	CFLAGS="-fPIC -O2" LDFLAGS=-L$(hdf5_prefix)/lib)
 	echo timestamp > netcdf4-configure-stamp
 
 netcdf4-compile-stamp: netcdf4-configure-stamp
