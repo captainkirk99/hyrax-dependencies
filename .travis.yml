@@ -13,9 +13,9 @@ branches:
   only:
     - master
 
-# Use this to prepare the system to install prerequisites or dependencies
+# Use this to prepare the system to install prerequisites or
+# dependencies
 #
-# Building on Ubuntu, we need uuid-dev, xml and curl
 before_install:
   - sudo apt-get update -qq
 
@@ -26,14 +26,15 @@ before_install:
 #
 # install:
  
-# Use this to prepare your build for testing
-# e.g. copy database configurations, environment variables, etc.
+# Use this to prepare your build for testing e.g. copy database
+# configurations, environment variables, etc.
 #
 # I set $prefix
 before_script:
-  - export prefix=`pwd`/../build
+  - export prefix=$HOME/OPENDAP/build
 
-# All commands must exit with code 0 on success. Anything else is considered failure.
+# All commands must exit with code 0 on success. Anything else is
+# considered failure.
 #
 script:
   - make -j7

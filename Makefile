@@ -21,6 +21,11 @@ deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits i
 .PHONY: $(rpmdeps)
 rpmdeps = bison hdfeos gdal gridfields fits
 
+# The 'all-static-deps' are the deps we need when all of the handlers are
+# to be statically linked to the dependencies contained in this project - 
+# and when we are not going to use _any_ RPMs. This makes for a bigger bes
+# rpm distribution, but also one that is easier to install because it does
+# not require any non-stock yum repo.
 .PHONY: $(all_static_deps)
 all_static_deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
@@ -30,18 +35,24 @@ deps_really_clean = $(deps:%=%-really-clean)
 all:
 	for d in $(deps); do $(MAKE) $(MFLAGS) $$d; done
 
-# for both of these targets you should also set 
-# CONFIGURE_FLAGS=--disable-shared when you call make
+# Build the deps so we can make a BES RPM that will include all of the
+# handlers, but which still makes use of the deps that have RPMs in some
+# public yum repo.
 for-rpm:
 	@if test -z "$$CONFIGURE_FLAGS"; then \
 		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
 	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
 
+# Build everything but ICU as static. This means that an install
+# on linux will work on a completely bare RHEL 7 distro.
+#
 # The difference between this and 'all' is that icu is not built.
 # I want to avoid statically linking with that. Also, this does
 # not yet work - netcdf4 and hdf5 need to have their builds 
 # tweaked still. jhrg 4/7/15
 # Done. This now works. Don't forget CONFIGURE_FLAGS. jhrg 5/6/15
+# Now there's no need to fiddle with setting CONFIGURE_FLAGS.
+# jhrg 6/12/15
 for-static-rpm:
 	@if test -z "$$CONFIGURE_FLAGS"; then \
 		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
