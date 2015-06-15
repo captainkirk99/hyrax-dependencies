@@ -335,7 +335,7 @@ $(hdf4_src)-stamp:
 	echo timestamp > $(hdf4_src)-stamp
 
 hdf4-configure-stamp:  $(hdf4_src)-stamp
-	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
+	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS=-w \
 	--disable-fortran --enable-production --disable-netcdf		\
 	--with-pic --with-jpeg=$(jpeg_prefix) --prefix=$(hdf4_prefix))
 	echo timestamp > hdf4-configure-stamp
@@ -413,7 +413,7 @@ $(hdf5_src)-stamp:
 	echo timestamp > $(hdf5_src)-stamp
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
-	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS="-fPIC -O2" \
+	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS="-fPIC -O2 -w" \
 	 --prefix=$(hdf5_prefix))
 	echo timestamp > hdf5-configure-stamp
 
