@@ -1,5 +1,5 @@
 
-# Handwritten Makefile for the dependencies. Each dependency must be
+# Handwritten Makefile for the hyrax dependencies. Each dependency must be
 # configured, compiled and installed. Some support testing. Some do
 # not support parallel builds, with 'install' being particularly
 # problematic. 
@@ -28,6 +28,13 @@ rpmdeps = bison hdfeos gdal gridfields fits
 # not require any non-stock yum repo.
 .PHONY: $(all_static_deps)
 all_static_deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
+
+# Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
+# as of 9/4/15 and while that distribution has many of the deps, it also
+# lacks some key ones. It's easier to reuse this dependencies project than
+# roll a new one. jhrg 9/4/15
+.PHONY: $(travis_deps)
+travis_deps = bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -58,14 +65,17 @@ for-static-rpm:
 		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
 	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
 
+for-travis:
+	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
+
 clean: $(deps_clean)
 
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.11.1.tar \
-	 --exclude=.git --exclude='*~' --exclude='\._*' \
-	 hyrax-dependencies)
+	(cd ../ && tar --create --file hyrax-dependencies-1.11.2.tar \
+	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
+	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
 # The names of the source code distribution files and and the dirs
 # they unpack to.
@@ -230,7 +240,7 @@ $(openjpeg_src)-stamp:
 	echo timestamp > $(openjpeg_src)-stamp
 
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
-	(cd $(openjpeg_src) && $(cmake_prefix)/bin/cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
+	(cd $(openjpeg_src) && cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -252,7 +262,7 @@ openjpeg-really-clean: openjpeg-clean
 #	-rm -rf $(openjpeg_prefix)
 
 .PHONY: openjpeg
-openjpeg: cmake openjpeg-install-stamp
+openjpeg: openjpeg-install-stamp
 
 # GDAL 
 gdal_src=$(src)/$(gdal)
@@ -413,8 +423,8 @@ $(hdf5_src)-stamp:
 	echo timestamp > $(hdf5_src)-stamp
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
-	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS="-fPIC -O2 -w" \
-	 --prefix=$(hdf5_prefix))
+	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) \
+	 CFLAGS="-fPIC -O2 -w" --prefix=$(hdf5_prefix))
 	echo timestamp > hdf5-configure-stamp
 
 hdf5-compile-stamp: hdf5-configure-stamp
