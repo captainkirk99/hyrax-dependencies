@@ -3,15 +3,17 @@ Short version: To build the dependencies for the BES handlers used
 with Hyrax, run 'make' in this directory. The Makefile assumes that
 the environment variable 'prefix' has been set and points to the root
 of the directory where you are building Hyrax (it does not have to be,
-but that's the assumption). The Makfile will compile, test and install
-all of the dependencies in $prefix/deps. For each of the handlers, use
+but that's the assumption). The Makefile will compile, test and install
+all of the dependencies in $prefix/deps. 
+
+To use these dependecies, for each of the handlers, use
 the --with-* option for its configure script to set the build. For
 example, for the hdf4 handler, use 
 
 	 ./configure --with-hdf4=$prefix/deps
 
 Note that most people who build Hyrax from source will want to set the
-prefix to a specific directory, so that ption would be included as
+prefix to a specific directory, so that option would be included as
 well (--prefix=$prefix), and the PATH environment variable should
 nominally be set to $prefix/bin.
 
