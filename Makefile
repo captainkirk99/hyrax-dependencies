@@ -84,7 +84,7 @@ cmake=cmake-2.8.12.2
 cmake_dist=cmake-2.8.12.2.tar.gz
 
 bison=bison-3.0.4
-bison_dist=bison-3.0.4.tar.xz
+bison_dist=$(bison).tar.gz
 
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
@@ -205,7 +205,7 @@ bison_src=$(src)/$(bison)
 bison_prefix=$(prefix)/deps
 
 $(bison_src)-stamp:
-	tar -xJf downloads/$(bison_dist) -C $(src)
+	tar -xf downloads/$(bison_dist) -C $(src)
 	echo timestamp > $(bison_src)-stamp
 
 bison-configure-stamp:  $(bison_src)-stamp
