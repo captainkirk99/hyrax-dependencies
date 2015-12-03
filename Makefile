@@ -205,7 +205,7 @@ bison_src=$(src)/$(bison)
 bison_prefix=$(prefix)/deps
 
 $(bison_src)-stamp:
-	tar -xjf downloads/$(bison_dist) -C $(src)
+	tar -xf downloads/$(bison_dist) -C $(src)
 	echo timestamp > $(bison_src)-stamp
 
 bison-configure-stamp:  $(bison_src)-stamp
