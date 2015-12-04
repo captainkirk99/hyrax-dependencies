@@ -95,7 +95,7 @@ openjpeg_dist=openjpeg-2.0.0.tar.gz
 gdal=gdal-1.10.0
 gdal_dist=$(gdal).tar.gz
 
-gridfields=gridfields-1.0.4
+gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
 
 hdf4=hdf-4.2.10
