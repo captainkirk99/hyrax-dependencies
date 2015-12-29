@@ -107,7 +107,7 @@ hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 hdf5=hdf5-1.8.6
 hdf5_dist=$(hdf5).tar.gz
 
-netcdf4=netcdf-4.3.1.1
+netcdf4=netcdf-4.3.3.1
 netcdf4_dist=$(netcdf4).tar.gz
 
 fits=cfitsio

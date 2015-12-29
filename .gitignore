@@ -3,3 +3,4 @@
 *-stamp
 .project
 .cproject
+*.DS_Store
