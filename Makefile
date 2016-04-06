@@ -73,7 +73,7 @@ clean: $(deps_clean)
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.11.2.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.13.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
@@ -90,10 +90,21 @@ jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
 openjpeg=openjpeg-2.0.0
-openjpeg_dist=openjpeg-2.0.0.tar.gz
+openjpeg_dist=$(openjpeg).tar.gz
 
+# This newer version is not yet working in/with our code.
+# jhrg 4/5/16
+# openjpeg=openjpeg-version.2.1
+# openjpeg_dist=$(openjpeg).tar.gz
+
+# The old version... jhrg 4/5/16
 gdal=gdal-1.10.0
 gdal_dist=$(gdal).tar.gz
+
+# This seems to have issues with jpeg2000
+# jhrg 4/5/16 
+# gdal=gdal-2.0.2
+# gdal_dist=$(gdal).tar.xz
 
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
@@ -104,8 +115,17 @@ hdf4_dist=$(hdf4).tar.gz
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
-hdf5=hdf5-1.8.6
-hdf5_dist=$(hdf5).tar.gz
+# The old version... jhrg 4/5/16
+# hdf5=hdf5-1.8.6
+# hdf5_dist=$(hdf5).tar.gz
+
+hdf5=hdf5-1.8.16
+hdf5_dist=$(hdf5).tar.bz2
+
+# hdf5=hdf5-1.10.0
+# hdf5_dist=$(hdf5).tar.bz2
+# # Use this until we fix the handler...
+# hdf5_configure_flags=--with-default-api-version=v18
 
 netcdf4=netcdf-4.3.3.1
 netcdf4_dist=$(netcdf4).tar.gz
@@ -424,7 +444,8 @@ $(hdf5_src)-stamp:
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
 	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) \
-	 CFLAGS="-fPIC -O2 -w" --prefix=$(hdf5_prefix))
+	 $(hdf5_configure_flags) --prefix=$(hdf5_prefix) \
+	 CFLAGS="-fPIC -O2 -w")
 	echo timestamp > hdf5-configure-stamp
 
 hdf5-compile-stamp: hdf5-configure-stamp
