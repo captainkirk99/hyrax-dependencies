@@ -73,7 +73,7 @@ clean: $(deps_clean)
 really-clean: $(deps_really_clean)
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.13.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.14.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
