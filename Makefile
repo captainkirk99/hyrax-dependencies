@@ -58,8 +58,6 @@ for-rpm:
 # not yet work - netcdf4 and hdf5 need to have their builds 
 # tweaked still. jhrg 4/7/15
 # Done. This now works. Don't forget CONFIGURE_FLAGS. jhrg 5/6/15
-# Now there's no need to fiddle with setting CONFIGURE_FLAGS.
-# jhrg 6/12/15
 for-static-rpm:
 	@if test -z "$$CONFIGURE_FLAGS"; then \
 		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
