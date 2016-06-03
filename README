@@ -1,5 +1,4 @@
 
-
 Short version: To build the dependencies for the BES handlers used
 with Hyrax, run 'make' in this directory. The Makefile assumes that
 the environment variable 'prefix' has been set and points to the root
@@ -21,6 +20,8 @@ nominally be set to $prefix/bin.
 ---------------------------------------------------------------------
 
 Notes
+
+I have updated a number of the libraries. jhrg 6/3/16
 
 I modified the Makefile so that the dependency libraries, etc., are 
 installed in $prefix/deps and not $prefix/deps/<package>-<version> so
