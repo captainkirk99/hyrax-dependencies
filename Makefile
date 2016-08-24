@@ -12,14 +12,14 @@
 # using CONFIGURE_FLAGS=...opts on the command line.
 
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
+deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 
 # The 'deps' are all of the dependencies hyrax/bes needs. rpmdeps are
 # the libraries we link with statically so that we can include features
 # in the BES rpm even though these dependencies are not part of any rpm
 # distribution. 
 .PHONY: $(rpmdeps)
-rpmdeps = bison hdfeos gdal gridfields fits
+rpmdeps = bison hdfeos gdal2 gridfields fits
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -27,28 +27,31 @@ rpmdeps = bison hdfeos gdal gridfields fits
 # rpm distribution, but also one that is easier to install because it does
 # not require any non-stock yum repo.
 .PHONY: $(all_static_deps)
-all_static_deps = cmake bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
+all_static_deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal gridfields hdf4 hdfeos hdf5 netcdf4 fits
+travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
 
-all:
+all: prefix-set
 	for d in $(deps); do $(MAKE) $(MFLAGS) $$d; done
+
+.PHONY: prefix-set
+prefix-set:
+	@if test -z "$$prefix"; then \
+		echo "The env variable \"prefix\" must be set. See README"; exit 1; fi
 
 # Build the deps so we can make a BES RPM that will include all of the
 # handlers, but which still makes use of the deps that have RPMs in some
 # public yum repo.
-for-rpm:
-	@if test -z "$$CONFIGURE_FLAGS"; then \
-		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
-	for d in $(rpmdeps); do $(MAKE) $(MFLAGS) $$d; done
+for-rpm: prefix-set
+	for d in $(rpmdeps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
 
 # Build everything but ICU as static. This means that an install
 # on linux will work on a completely bare RHEL 7 distro.
@@ -58,20 +61,21 @@ for-rpm:
 # not yet work - netcdf4 and hdf5 need to have their builds 
 # tweaked still. jhrg 4/7/15
 # Done. This now works. Don't forget CONFIGURE_FLAGS. jhrg 5/6/15
-for-static-rpm:
-	@if test -z "$$CONFIGURE_FLAGS"; then \
-		echo "set CONFIGURE_FLAGS=--disable-shared"; exit 1; fi
-	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
+for-static-rpm: prefix-set
+	for d in $(all_static_deps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
 
-for-travis:
+for-travis: prefix-set
 	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
 
 really-clean: $(deps_really_clean)
 
+uninstall: prefix-set
+	-rm -rf $(prefix)/deps/*
+
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.14.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.15.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
@@ -87,22 +91,19 @@ bison_dist=$(bison).tar.gz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.0.0
+# Old version: openjpeg=openjpeg-2.0.0
+openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
-# This newer version is not yet working in/with our code.
-# jhrg 4/5/16
-# openjpeg=openjpeg-version.2.1
-# openjpeg_dist=$(openjpeg).tar.gz
-
 # The old version... jhrg 4/5/16
+# if we drop back to a 1.x version of gdal, then we should go for
+# 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
 gdal=gdal-1.10.0
 gdal_dist=$(gdal).tar.gz
 
-# This seems to have issues with jpeg2000
-# jhrg 4/5/16 
-# gdal=gdal-2.0.2
-# gdal_dist=$(gdal).tar.xz
+# The new version. jhrg 8/24/16
+gdal2=gdal-2.1.1
+gdal2_dist=$(gdal2).tar.xz
 
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
@@ -316,6 +317,39 @@ gdal-really-clean: gdal-clean
 
 .PHONY: gdal
 gdal: openjpeg gdal-install-stamp
+
+# GDAL2
+gdal2_src=$(src)/$(gdal2)
+gdal2_prefix=$(prefix)/deps
+
+$(gdal2_src)-stamp:
+	tar -xzf downloads/$(gdal2_dist) -C $(src)
+	echo timestamp > $(gdal2_src)-stamp
+
+gdal2-configure-stamp:  $(gdal2_src)-stamp
+	(cd $(gdal2_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
+	--prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
+	echo timestamp > gdal2-configure-stamp
+
+gdal2-compile-stamp: gdal2-configure-stamp
+	(cd $(gdal2_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > gdal2-compile-stamp
+
+# Force -j1 for install
+gdal2-install-stamp: gdal2-compile-stamp
+	(cd $(gdal2_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > gdal2-install-stamp
+
+gdal2-clean:
+	-rm gdal2-*-stamp
+	-(cd  $(gdal2_src) && $(MAKE) $(MFLAGS) clean)
+
+gdal2-really-clean: gdal2-clean
+	-rm $(gdal2_src)-stamp
+	-rm -rf $(gdal2_src)
+
+.PHONY: gdal2
+gdal2: openjpeg gdal2-install-stamp
 
 # removed jhrg 12/28/12 openjpeg 
 

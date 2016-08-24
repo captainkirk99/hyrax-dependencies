@@ -6,11 +6,10 @@ of the directory where you are building Hyrax (it does not have to be,
 but that's the assumption). The Makefile will compile, test and install
 all of the dependencies in $prefix/deps. 
 
-To use these dependecies, for each of the handlers, use
-the --with-* option for its configure script to set the build. For
-example, for the hdf4 handler, use 
+To use these dependecies with the complete BES build, use the --with-dependencies=
+option with its configure script like this:
 
-	 ./configure --with-hdf4=$prefix/deps
+       ./configure [other options] --with-depdendencies=$prefix/deps
 
 Note that most people who build Hyrax from source will want to set the
 prefix to a specific directory, so that option would be included as
@@ -20,6 +19,9 @@ nominally be set to $prefix/bin.
 ---------------------------------------------------------------------
 
 Notes
+
+GDAL and OpenJPEG libraires updated to 2.1.1 (each, coincidentally,
+has the smae version number). jhrg 8.24.16
 
 I have updated a number of the libraries. jhrg 6/3/16
 
