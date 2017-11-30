@@ -1,27 +1,56 @@
 
-Short version: To build the dependencies for the BES handlers used
-with Hyrax, run 'make' in this directory. The Makefile assumes that
-the environment variable 'prefix' has been set and points to the root
-of the directory where you are building Hyrax (it does not have to be,
-but that's the assumption). The Makefile will compile, test and install
-all of the dependencies in $prefix/deps. 
+Short version: 'make' builds and installs the dependencies for Hyrax
 
-To use these dependecies with the complete BES build, use the --with-dependencies=
-option with its configure script like this:
+--------------------------------------------------------------------
+
+To build the dependencies for the BES handlers used
+with Hyrax, run 'make' in this directory. The Makefile requires that
+the environment variable 'prefix' has been set. It should point to the
+directory where you are installing Hyrax. The Makefile will compile,
+test and install all of the dependencies in $prefix/deps.
+
+Other targets in the Makefile besides 'all:'
+
+for-static-rpm: Use this to build only static versions of the
+libraries. This is used to build RPM packages for Hyrax that use
+statically linked dependency libraries.
+
+for-travis: This build the dependencies for a CI build on Travis
+(which uses Ubuntu 14 as of 11/30/17).
+
+clean: run clean in all the src dirs
+
+really-clean: remove the src dirs and start over expandin the
+dependencies' source distributions.
+
+uninstall: Remove all the stuff from $prefix/deps
+
+dist: Make a tar ball distribution.
+
+--------------------------------------------------------------------
+
+To use these dependecies with the complete BES build, use the
+--with-dependencies= option with its configure script like this:
 
        ./configure [other options] --with-depdendencies=$prefix/deps
 
 Note that most people who build Hyrax from source will want to set the
 prefix to a specific directory, so that option would be included as
 well (--prefix=$prefix), and the PATH environment variable should
-nominally be set to $prefix/bin.
+nominally include $prefix/bin and $prefix/deps/bin.
 
 ---------------------------------------------------------------------
 
 Notes
 
+bzip2 is needed for this to work. But, if you're building Hyrax, get
+bzip2-devel since that will be needed later on.
+
+Builing the static libs and Hyrax takes more space than an AWS EC2's
+default disk size of 8GB. 
+
 GDAL and OpenJPEG libraires updated to 2.1.1 (each, coincidentally,
-has the smae version number). jhrg 8.24.16
+has the same version number). jhrg 8.24.16
 
 I have updated a number of the libraries. jhrg 6/3/16
 
