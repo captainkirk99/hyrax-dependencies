@@ -313,7 +313,7 @@ gdal2_src=$(src)/$(gdal2)
 gdal2_prefix=$(prefix)/deps
 
 $(gdal2_src)-stamp:
-	tar -xzf downloads/$(gdal2_dist) -C $(src)
+	tar -xJf downloads/$(gdal2_dist) -C $(src)
 	echo timestamp > $(gdal2_src)-stamp
 
 gdal2-configure-stamp:  $(gdal2_src)-stamp
