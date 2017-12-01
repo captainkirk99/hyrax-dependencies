@@ -73,7 +73,7 @@ dist: really-clean
 # they unpack to.
 
 cmake=cmake-2.8.12.2
-cmake_dist=cmake-2.8.12.2.tar.gz
+cmake_dist=$(cmake).tar.gz
 
 bison=bison-3.0.4
 bison_dist=$(bison).tar.gz
@@ -88,8 +88,8 @@ openjpeg_dist=$(openjpeg).tar.gz
 # The old version... jhrg 4/5/16
 # if we drop back to a 1.x version of gdal, then we should go for
 # 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
-gdal=gdal-1.10.0
-gdal_dist=$(gdal).tar.gz
+# gdal=gdal-1.10.0
+# gdal_dist=$(gdal).tar.gz
 
 # The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
