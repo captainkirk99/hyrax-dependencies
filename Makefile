@@ -14,13 +14,6 @@
 .PHONY: $(deps)
 deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
 
-# The 'deps' are all of the dependencies hyrax/bes needs. rpmdeps are
-# the libraries we link with statically so that we can include features
-# in the BES rpm even though these dependencies are not part of any rpm
-# distribution. 
-.PHONY: $(rpmdeps)
-rpmdeps = bison hdfeos gdal2 gridfields fits
-
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
 # and when we are not going to use _any_ RPMs. This makes for a bigger bes
@@ -45,22 +38,19 @@ all: prefix-set
 .PHONY: prefix-set
 prefix-set:
 	@if test -z "$$prefix"; then \
-		echo "The env variable \"prefix\" must be set. See README"; exit 1; fi
+	echo "The env variable 'prefix' must be set. See README"; exit 1; fi
 
-# Build the deps so we can make a BES RPM that will include all of the
-# handlers, but which still makes use of the deps that have RPMs in some
-# public yum repo.
-for-rpm: prefix-set
-	for d in $(rpmdeps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
-
-# Build everything but ICU as static. This means that an install
-# on linux will work on a completely bare RHEL 7 distro.
+# Build everything but ICU, as static. Whwen the BES is built and
+# linked against these, the resulting modules will not need their
+# dependencies installed since they will be statically linked to them.
 #
-# The difference between this and 'all' is that icu is not built.
+# Another difference between this and 'all' is that icu is not built.
 # I want to avoid statically linking with that. Also, this does
 # not yet work - netcdf4 and hdf5 need to have their builds 
 # tweaked still. jhrg 4/7/15
 # Done. This now works. Don't forget CONFIGURE_FLAGS. jhrg 5/6/15
+# CONFIGURE_FLAGS now set by this target - no need to remember to do
+# it. jhrg 11/29/17.
 for-static-rpm: prefix-set
 	for d in $(all_static_deps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
 
@@ -75,7 +65,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.15.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.16.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
@@ -83,7 +73,7 @@ dist: really-clean
 # they unpack to.
 
 cmake=cmake-2.8.12.2
-cmake_dist=cmake-2.8.12.2.tar.gz
+cmake_dist=$(cmake).tar.gz
 
 bison=bison-3.0.4-osx-patch
 bison_dist=$(bison).tar.gz
@@ -98,8 +88,8 @@ openjpeg_dist=$(openjpeg).tar.gz
 # The old version... jhrg 4/5/16
 # if we drop back to a 1.x version of gdal, then we should go for
 # 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
-gdal=gdal-1.10.0
-gdal_dist=$(gdal).tar.gz
+# gdal=gdal-1.10.0
+# gdal_dist=$(gdal).tar.gz
 
 # The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
@@ -126,7 +116,7 @@ hdf5_dist=$(hdf5).tar.bz2
 # # Use this until we fix the handler...
 # hdf5_configure_flags=--with-default-api-version=v18
 
-netcdf4=netcdf-4.3.3.1
+netcdf4=netcdf-c-4.4.1.1
 netcdf4_dist=$(netcdf4).tar.gz
 
 fits=cfitsio

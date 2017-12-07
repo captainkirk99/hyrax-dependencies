@@ -2,6 +2,10 @@
 #
 # Initial Travic-CI control file. 6.12.15 jhrg
 
+dist: trusty
+
+sudo: false
+
 language: cpp
 
 compiler:
@@ -12,6 +16,16 @@ compiler:
 branches:
   only:
     - master
+
+# These may not be needed, but adding them mimics the build env of the BES
+addons:
+  apt:
+    packages:
+      - uuid-dev
+      - libxml2-dev
+      - libcurl4-openssl-dev
+      - libcppunit-dev
+      - libicu-dev
 
 # Use this to prepare the system to install prerequisites or
 # dependencies
@@ -37,6 +51,6 @@ before_script:
 # considered failure.
 #
 script:
-  - make -j7
+  - make -j7 for-travis
   
 # after_script:
