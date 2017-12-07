@@ -85,7 +85,7 @@ dist: really-clean
 cmake=cmake-2.8.12.2
 cmake_dist=cmake-2.8.12.2.tar.gz
 
-bison=bison-3.0.4
+bison=bison-3.0.4-osx-patch
 bison_dist=$(bison).tar.gz
 
 jpeg=jpeg-6b
