@@ -73,6 +73,12 @@ dist: really-clean
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
+install:
+	@echo "Nothing to do for install in hyrax-dependencies"
+
+check:
+	@echo "Nothing to do for check in hyrax-dependencies"
+
 # The names of the source code distribution files and and the dirs
 # they unpack to.
 
