@@ -33,6 +33,6 @@ deploy:
   skip_cleanup: true
   local_dir: $prefix/package
   on:
-  - master
-  - travis
-  
+    branch:
+    - master
+    - travis
