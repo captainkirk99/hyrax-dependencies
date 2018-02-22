@@ -21,9 +21,8 @@ before_script:
 script:
 - make -j7 for-travis
 before_deploy:
-- tar -czf hyrax-dependencies-build.tar.gz build
-- mkdir travis_binary
-- mv hyrax-dependencies-build.tar.gz travis_binary
+- mkdir ~/package
+- tar -czf ~/package/hyrax-dependencies-build.tar.gz ~/build
 deploy:
   provider: s3
   access_key_id: AKIAJZVG7ULONJ23KRZA
@@ -31,7 +30,7 @@ deploy:
     secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
-  local_dir: travis_binary
+  local_dir: package
   on:
     branch:
     - master
