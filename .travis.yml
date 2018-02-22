@@ -24,7 +24,6 @@ before_deploy:
 - mkdir $prefix/package
 - tar -czf $prefix/package/hyrax-dependencies-build.tar.gz $prefix
 - ls -l $prefix/package
-- tar -tzf $prefix/package/hyrax-dependencies-build.tar.gz
 deploy:
   provider: s3
   access_key_id: AKIAJZVG7ULONJ23KRZA
@@ -34,7 +33,6 @@ deploy:
   skip_cleanup: true
   local_dir: $prefix/package
   on:
-    branch:
-    - master
-    - travis
-
+  - master
+  - travis
+  
