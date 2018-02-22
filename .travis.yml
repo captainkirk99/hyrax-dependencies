@@ -5,6 +5,7 @@ compiler: gcc
 branches:
   only:
   - master
+  - travis
 addons:
   apt:
     packages:
@@ -20,7 +21,7 @@ before_script:
 script:
 - make -j7 for-travis
 before_deploy:
-- tar -xzf hyrax-dependencies-build.tar.gz build
+- tar -czf hyrax-dependencies-build.tar.gz build
 - mkdir travis_binary
 - mv hyrax-dependencies-build.tar.gz travis_binary
 deploy:
@@ -31,4 +32,8 @@ deploy:
   bucket: opendap.travis.build
   skip_cleanup: true
   local_dir: travis_binary
+  on:
+    branch:
+    - master
+    - travis
 
