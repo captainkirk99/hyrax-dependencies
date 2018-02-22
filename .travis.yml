@@ -23,6 +23,7 @@ script:
 before_deploy:
 - mkdir ~/package
 - tar -czf ~/package/hyrax-dependencies-build.tar.gz ~/build
+- ls -l ~/package
 deploy:
   provider: s3
   access_key_id: AKIAJZVG7ULONJ23KRZA
