@@ -22,18 +22,18 @@ addons:
 
 env:
   global:
-  - prefix=$TRAVIS_BUILD_DIR/build
+  - prefix=$HOME/build
 
 before_install:
 - sudo apt-get update -qq
 
 script:
+- printenv
 - make -j7 for-travis
 
 before_deploy:
 - mkdir $prefix/package
-- tar -czvf $prefix/package/hyrax-dependencies-build.tar.gz $prefix
-- ls -l $prefix/package
+- tar -C $HOME -czvf $prefix/package/hyrax-dependencies-build.tar.gz build
 
 deploy:
   provider: s3
