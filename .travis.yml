@@ -1,11 +1,16 @@
 dist: trusty
+
 sudo: false
+
 language: cpp
+
 compiler: gcc
+
 branches:
   only:
   - master
   - travis
+
 addons:
   apt:
     packages:
@@ -14,16 +19,22 @@ addons:
     - libcurl4-openssl-dev
     - libcppunit-dev
     - libicu-dev
+
+env:
+  global:
+  - prefix=$TRAVIS_BUILD_DIR/build
+
 before_install:
 - sudo apt-get update -qq
-before_script:
-- export prefix=$HOME/OPENDAP/build
+
 script:
 - make -j7 for-travis
+
 before_deploy:
 - mkdir $prefix/package
-- tar -czf $prefix/package/hyrax-dependencies-build.tar.gz $prefix
+- tar -czvf $prefix/package/hyrax-dependencies-build.tar.gz $prefix
 - ls -l $prefix/package
+
 deploy:
   provider: s3
   access_key_id: AKIAJZVG7ULONJ23KRZA
