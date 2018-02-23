@@ -1,11 +1,20 @@
+
+# Build the hyrax-dependencies repo and snapshot that build if it works.
+# jhrg 2/23/18 
+
 dist: trusty
+
 sudo: false
+
 language: cpp
+
 compiler: gcc
+
 branches:
   only:
   - master
   - travis
+
 addons:
   apt:
     packages:
@@ -14,16 +23,22 @@ addons:
     - libcurl4-openssl-dev
     - libcppunit-dev
     - libicu-dev
+
+env:
+  global:
+  - prefix=$TRAVIS_BUILD_DIR/install
+
 before_install:
 - sudo apt-get update -qq
-before_script:
-- export prefix=$HOME/OPENDAP/build
+
 script:
+- printenv
 - make -j7 for-travis
+
 before_deploy:
-- mkdir $prefix/package
-- tar -czf $prefix/package/hyrax-dependencies-build.tar.gz $prefix
-- ls -l $prefix/package
+- mkdir $TRAVIS_BUILD_DIR/package
+- tar -C $TRAVIS_BUILD_DIR -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install
+
 deploy:
   provider: s3
   access_key_id: AKIAJZVG7ULONJ23KRZA
@@ -31,7 +46,7 @@ deploy:
     secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
-  local_dir: $prefix/package
+  local_dir: $TRAVIS_BUILD_DIR/package
   on:
     branch:
     - master
