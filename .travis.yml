@@ -33,7 +33,7 @@ script:
 
 before_deploy:
 - mkdir $HOME/package
-- tar -C $HOME -czvf package/hyrax-dependencies-build.tar.gz build
+- tar -C $HOME -czvf $HOME/package/hyrax-dependencies-build.tar.gz build
 
 deploy:
   provider: s3
