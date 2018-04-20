@@ -10,6 +10,10 @@
 #
 # Note that you can pass in extra flags for the configure scripts 
 # using CONFIGURE_FLAGS=...opts on the command line.
+#
+# Removed the dependencies on the targets for individual libraries.
+# This was complicating the build on Travis where some parts are present
+# (e.g., cmake).
 
 .PHONY: $(deps)
 deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
@@ -65,9 +69,15 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.16.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.17.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
+
+install:
+	@echo "Nothing to do for install in hyrax-dependencies"
+
+check:
+	@echo "Nothing to do for check in hyrax-dependencies"
 
 # The names of the source code distribution files and and the dirs
 # they unpack to.
@@ -170,8 +180,6 @@ jpeg-really-clean: jpeg-clean
 	-rm $(src)/jpeg-*-stamp
 	-rm -rf $(jpeg_src)
 
-#	-rm -rf $(jpeg_prefix)
-
 .PHONY: jpeg
 jpeg: jpeg-install-stamp
 
@@ -203,8 +211,6 @@ cmake-clean:
 cmake-really-clean: cmake-clean
 	-rm $(src)/cmake-*-stamp	
 	-rm -rf $(cmake_src)
-
-#	-rm -rf $(cmake_prefix)
 
 .PHONY: cmake
 cmake: cmake-install-stamp
@@ -268,8 +274,6 @@ openjpeg-really-clean: openjpeg-clean
 	-rm $(src)/openjpeg-*-stamp	
 	-rm -rf $(openjpeg_src)
 
-#	-rm -rf $(openjpeg_prefix)
-
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
 
@@ -303,10 +307,8 @@ gdal-really-clean: gdal-clean
 	-rm $(gdal_src)-stamp
 	-rm -rf $(gdal_src)
 
-#	-rm -rf $(gdal_prefix)
-
 .PHONY: gdal
-gdal: openjpeg gdal-install-stamp
+gdal: gdal-install-stamp
 
 # GDAL2
 gdal2_src=$(src)/$(gdal2)
@@ -339,9 +341,7 @@ gdal2-really-clean: gdal2-clean
 	-rm -rf $(gdal2_src)
 
 .PHONY: gdal2
-gdal2: openjpeg gdal2-install-stamp
-
-# removed jhrg 12/28/12 openjpeg 
+gdal2: gdal2-install-stamp
 
 # Gridfields 
 gridfields_src=$(src)/$(gridfields)
@@ -373,8 +373,6 @@ gridfields-really-clean: gridfields-clean
 	-rm $(gridfields_src)-stamp
 	-rm -rf $(gridfields_src)
 
-#	-rm -rf $(gridfields_prefix)
-
 .PHONY: gridfields
 gridfields: gridfields-install-stamp
 
@@ -399,7 +397,7 @@ hdf4-compile-stamp: hdf4-configure-stamp
 # Force -j1 for install
 # The copies of ncdump and ncgen installed by hdf4 are evil ;-)
 # remove them to avoid in advertanly using them in tests (e.g.,
-# fonc's tests. jhrg 4/10/15
+# fonc's tests). jhrg 4/10/15
 hdf4-install-stamp: hdf4-compile-stamp
 	(cd $(hdf4_src) && $(MAKE) $(MFLAGS) -j1 install)
 	-rm $(hdf4_prefix)/bin/ncdump
@@ -415,7 +413,7 @@ hdf4-really-clean: hdf4-clean
 	-rm -rf $(hdf4_src)
 
 .PHONY: hdf4
-hdf4: jpeg 
+hdf4: 
 	$(MAKE) $(MFLAGS) hdf4-install-stamp
 
 # HDF EOS2 
@@ -450,10 +448,8 @@ hdfeos-really-clean: hdfeos-clean
 	-rm $(hdfeos_src)-stamp
 	-rm -rf $(hdfeos_src)
 
-#	-rm -rf $(hdfeos_prefix)
-
 .PHONY: hdfeos
-hdfeos: hdf4
+hdfeos:
 	$(MAKE) $(MFLAGS) hdfeos-install-stamp
 
 # HDF5 
@@ -486,8 +482,6 @@ hdf5-clean:
 hdf5-really-clean: hdf5-clean
 	-rm $(hdf5_src)-stamp
 	-rm -rf $(hdf5_src)
-
-#	-rm -rf $(hdf5_prefix)
 
 .PHONY: hdf5
 hdf5: hdf5-install-stamp
@@ -523,10 +517,8 @@ netcdf4-really-clean: netcdf4-clean
 	-rm $(netcdf4_src)-stamp
 	-rm -rf $(netcdf4_src)
 
-#	-rm -rf $(netcdf4_prefix)
-
 .PHONY: netcdf4
-netcdf4: hdf5 netcdf4-install-stamp
+netcdf4: netcdf4-install-stamp
 
 # cfitsio 
 fits_src=$(src)/$(fits)
@@ -556,8 +548,6 @@ fits-clean:
 fits-really-clean: fits-clean
 	-rm $(fits_src)-stamp
 	-rm -rf $(fits_src)
-
-#	-rm -rf $(fits_prefix)
 
 .PHONY: fits
 fits: fits-install-stamp
@@ -596,8 +586,6 @@ icu-clean:
 icu-really-clean: icu-clean
 	-rm $(src)/$(icu)-stamp
 	-rm -rf $(src)/$(icu)
-
-#	-rm -rf $(icu_prefix)
 
 .PHONY: icu
 icu: icu-install-stamp

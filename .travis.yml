@@ -1,6 +1,6 @@
-# -*- shell-script -*-
-#
-# Initial Travic-CI control file. 6.12.15 jhrg
+
+# Build the hyrax-dependencies repo and snapshot that build if it works.
+# jhrg 2/23/18 
 
 dist: trusty
 
@@ -8,49 +8,46 @@ sudo: false
 
 language: cpp
 
-compiler:
-  - gcc
-  - clang
+compiler: gcc
 
-# whitelist
 branches:
   only:
-    - master
+  - master
+  - travis
 
-# These may not be needed, but adding them mimics the build env of the BES
 addons:
   apt:
     packages:
-      - uuid-dev
-      - libxml2-dev
-      - libcurl4-openssl-dev
-      - libcppunit-dev
-      - libicu-dev
+    - uuid-dev
+    - libxml2-dev
+    - libcurl4-openssl-dev
+    - libcppunit-dev
+    - libicu-dev
 
-# Use this to prepare the system to install prerequisites or
-# dependencies
-#
+env:
+  global:
+  - prefix=$HOME/install
+
 before_install:
-  - sudo apt-get update -qq
+- sudo apt-get update -qq
 
-#- sudo apt-get install -y libxml2-dev uuid-dev libcurl4-openssl-dev
-
-# Use this to install any prerequisites or dependencies necessary to
-# run your build
-#
-# install:
- 
-# Use this to prepare your build for testing e.g. copy database
-# configurations, environment variables, etc.
-#
-# I set $prefix
-before_script:
-  - export prefix=$HOME/OPENDAP/build
-
-# All commands must exit with code 0 on success. Anything else is
-# considered failure.
-#
 script:
-  - make -j7 for-travis
-  
-# after_script:
+- printenv
+- make -j7 for-travis
+
+before_deploy:
+- mkdir $TRAVIS_BUILD_DIR/package
+- tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install
+
+deploy:
+  provider: s3
+  access_key_id: AKIAJZVG7ULONJ23KRZA
+  secret_access_key:
+    secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
+  bucket: opendap.travis.build
+  skip_cleanup: true
+  local_dir: $TRAVIS_BUILD_DIR/package
+  on:
+    branch:
+    - master
+    - travis
