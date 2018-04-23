@@ -1,4 +1,4 @@
-#
+
 # Handwritten Makefile for the hyrax dependencies. Each dependency must be
 # configured, compiled and installed. Some support testing. Some do
 # not support parallel builds, with 'install' being particularly
@@ -114,8 +114,8 @@ hdf4_dist=$(hdf4).tar.gz
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
-hdf5=hdf5
-hdf5_dist=hdf5-1.8.17-chunks.tar.gz
+hdf5=hdf5-1.8.17-chunks
+hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
 
 # hdf5=hdf5-1.8.16
 # hdf5=hdf5-1.8.20
