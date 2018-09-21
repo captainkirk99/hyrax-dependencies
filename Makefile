@@ -82,7 +82,8 @@ check:
 # The names of the source code distribution files and and the dirs
 # they unpack to.
 
-cmake=cmake-2.8.12.2
+# cmake=cmake-2.8.12.2
+cmake=cmake-3.11.3
 cmake_dist=$(cmake).tar.gz
 
 bison=bison-3.0.4-osx-patch
