@@ -44,11 +44,13 @@ jobs:
   - stage: build
     script:
     - export DEPS_BUILD=ubuntu
-    - make -j7 for-travis
+    - printenv
+    # - make -j7 for-travis
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
-    - docker run centos:centos6 df -h
+    - docker run --volume $HOME/install:/home/install --volume $TRAVIS_BUILD_DIR:/home/hyrax-dependencies \
+      centos:centos6 /home/hyrax-dependencies/build-for-rpm.sh
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
@@ -70,4 +72,4 @@ deploy:
   on:
     branch:
     - master
-    - travis
+    # - travis
