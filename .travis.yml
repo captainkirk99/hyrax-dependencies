@@ -49,7 +49,7 @@ jobs:
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
-    - docker run --volume $prefix/centos6:/home/install --volume $TRAVIS_BUILD_DIR:/home/hyrax-dependencies \
+    - docker run --volume $prefix/centos6:/home/install --volume $TRAVIS_BUILD_DIR:/home/hyrax-dependencies
       opendap/centos6_hyrax_builder:latest /home/hyrax-dependencies/build-for-rpm.sh
   - stage: package
     script: 
