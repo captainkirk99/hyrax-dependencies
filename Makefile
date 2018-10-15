@@ -59,11 +59,11 @@ prefix-set:
 # CONFIGURE_FLAGS now set by this target - no need to remember to do
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
-	for d in $(all_static_deps); do $(MAKE) $(MFLAGS) $$d; done
+	for d in $(all_static_deps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
-	for d in $(travis_deps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
+	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
 
