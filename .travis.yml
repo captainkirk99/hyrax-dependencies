@@ -39,8 +39,14 @@ jobs:
   include:
   - stage: build
     script:
-    - export DEPS_BUILD=ubuntu
+    - export DEPS_BUILD=travis
     - make -j7 for-travis
+  - stage: package
+    script:
+    - export DEPS_BUILD=ubuntu14
+    - mkdir -p $HOME/ubuntu14/install
+    - export prefix=$HOME/ubuntu14/install
+    - make -j7 for-travis CONFIGURE_FLAGS=--disable-shared 
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
@@ -50,13 +56,18 @@ jobs:
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
-    - docker run centos:centos7 df -h
+    - mkdir -p $HOME/centos6/install
+    - docker run --volume $HOME/centos7/install:/home/install --volume $TRAVIS_BUILD_DIR:/home/hyrax-dependencies
+             opendap/centos7_hyrax_builder:latest /home/hyrax-dependencies/build-for-rpm.sh
+    
     
 # before_depoly will be run after every job stage/script completes
 before_deploy:
 - mkdir $TRAVIS_BUILD_DIR/package
-- if test "x$DEPS_BUILD" = "xubuntu"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-unbuntu.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xtravis"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
 
 deploy:
   provider: s3
