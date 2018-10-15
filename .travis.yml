@@ -55,8 +55,8 @@ jobs:
 # before_depoly will be run after every job stage/script completes
 before_deploy:
 - mkdir $TRAVIS_BUILD_DIR/package
-- if test X$DEPS_BUILD = xubuntu; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-unbuntu.tar.gz install fi
-- if test X$DEPS_BUILD = xcentos6; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install fi
+- if test "x$DEPS_BUILD" = "xubuntu"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-unbuntu.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 
 deploy:
   provider: s3
