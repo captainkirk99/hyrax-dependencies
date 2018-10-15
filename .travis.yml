@@ -44,8 +44,7 @@ jobs:
   - stage: build
     script:
     - export DEPS_BUILD=ubuntu
-    - printenv
-    # - make -j7 for-travis
+    - make -j7 for-travis
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
