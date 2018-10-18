@@ -22,14 +22,15 @@
 # docker push opendap/centos6_hyrax_builder:latest 
 # 
 # Use an official CentOS6 or 7 runtime as a parent image
-FROM centos:centos6
+# FROM centos:centos6
 # FROM centos:centos7
 # Use this is you need to 'repair' an existing container: FROM centos7_hyrax_builder
+FROM opendap/centos6_hyrax_builder:latest
 
 # Set the working directory to /home; not needed. Once started, the /home/hyrax-dep...
 # dir will be made by the --volume option used with docker run. That's where the 
 # build sources will be found. But at this point, that directory does not exist.
-WORKDIR /home
+WORKDIR /root
 
 # Install any needed packages specified in requirements.txt
 RUN yum -y install gcc-c++ make cmake git flex bison autoconf automake libtool bc
@@ -37,5 +38,6 @@ RUN yum -y install openssl-devel libuuid-devel readline-devel libxml2-devel curl
 RUN yum -y install zlib-devel bzip2 bzip2-devel libjpeg-devel rpm-devel rpm-build redhat-rpm-config
 
 # Define environment variable. This is needed by the Makefile
-ENV prefix /home/install
+ENV prefix /root/install
 ENV PATH $prefix/install/bin:$prefix/install/deps/bin:$PATH
+ENV HOME /root
