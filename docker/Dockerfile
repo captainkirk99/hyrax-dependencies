@@ -18,7 +18,7 @@
 # Then push the docker container up to the docker hub
 #
 # docker login [use opendap's creds]
-# docker tag centos6_hyrax_builder opendap/centos6_hyrax_builder:latest
+# ocker tag centos6_hyrax_builder opendap/centos6_hyrax_builder:latest
 # docker push opendap/centos6_hyrax_builder:latest 
 # 
 # Use an official CentOS6 or 7 runtime as a parent image
@@ -40,3 +40,4 @@ RUN yum -y install zlib-devel bzip2 bzip2-devel libjpeg-devel rpm-devel rpm-buil
 # Define environment variable. This is needed by the Makefile
 ENV prefix /root/install
 ENV PATH $prefix/install/bin:$prefix/install/deps/bin:$PATH
+ENV HOME /root
