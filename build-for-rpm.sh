@@ -14,5 +14,5 @@ set -eux
 df -h
 printenv
 
-(cd /home/hyrax-dependencies && make -j4 for-static-rpm)
+(cd /root/hyrax-dependencies && make -j4 for-static-rpm)
  
