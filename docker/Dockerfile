@@ -20,7 +20,7 @@
 #
 # Use an official CentOS6 or 7 runtime as a parent image (centos:centos6
 # or centos:centos7)
-FROM centos:centos7
+FROM centos:centos6
 
 # Set the working directory to /root
 WORKDIR /root
@@ -32,5 +32,5 @@ RUN yum -y install zlib-devel bzip2 bzip2-devel libjpeg-devel rpm-devel rpm-buil
 
 # Define environment variables. These are needed by the Makefile(s) and autotools code.
 ENV prefix /root/install
-ENV PATH $prefix/install/bin:$prefix/install/deps/bin:$PATH
+ENV PATH $prefix/bin:$prefix/deps/bin:$PATH
 ENV HOME /root
