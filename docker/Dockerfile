@@ -31,6 +31,6 @@ RUN yum -y install openssl-devel libuuid-devel readline-devel libxml2-devel curl
 RUN yum -y install zlib-devel bzip2 bzip2-devel libjpeg-devel rpm-devel rpm-build redhat-rpm-config
 
 # Define environment variables. These are needed by the Makefile(s) and autotools code.
-ENV prefix /root/install
-ENV PATH $prefix/bin:$prefix/deps/bin:$PATH
 ENV HOME /root
+ENV prefix $HOME/install
+ENV PATH $prefix/bin:$prefix/deps/bin:$PATH

@@ -52,14 +52,13 @@ jobs:
     - export DEPS_BUILD=centos6
     - mkdir -p $HOME/centos6/install
     - docker run --volume $HOME/centos6/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
-             opendap/centos6_hyrax_builder:1.0 /root/hyrax-dependencies/build-for-rpm.sh
+             opendap/centos6_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
     - mkdir -p $HOME/centos6/install
     - docker run --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
-             opendap/centos7_hyrax_builder:1.0 /root/hyrax-dependencies/build-for-rpm.sh
-    
+             opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
     
 # before_depoly will be run after every job stage/script completes
 before_deploy:
