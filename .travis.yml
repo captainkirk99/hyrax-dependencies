@@ -29,7 +29,6 @@ env:
   - prefix=$HOME/install
 
 before_install:
-#- sudo apt-get update -qq
 
 # The coverity_scan branch is built by the addon
 jobs:
@@ -56,13 +55,13 @@ jobs:
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
-    - mkdir -p $HOME/centos6/install
+    - mkdir -p $HOME/centos7/install
     - docker run --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
     
-# before_depoly will be run after every job stage/script completes
+# before_depoly will be run once for every job stage/script that completes
 before_deploy:
-- mkdir $TRAVIS_BUILD_DIR/package
+- mkdir -p $TRAVIS_BUILD_DIR/package
 - if test "x$DEPS_BUILD" = "xtravis"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
@@ -79,4 +78,3 @@ deploy:
   on:
     branch:
     - master
-    - travis
