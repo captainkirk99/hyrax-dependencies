@@ -13,7 +13,6 @@ compiler: gcc
 branches:
   only:
   - master
-  - travis
   - debian
 
 addons:
@@ -46,7 +45,7 @@ jobs:
     - export DEPS_BUILD=ubuntu14
     - mkdir -p $HOME/ubuntu14/install
     - docker run --volume $HOME/ubuntu14/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
-    			opendap/ubuntu14_hyrax_build:1.0 /root/hyrax-dependencies/build-for-deb.sh
+             opendap/ubuntu14_hyrax_build:1.0 /root/hyrax-dependencies/build-for-deb.sh
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
