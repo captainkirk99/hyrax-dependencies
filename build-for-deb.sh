@@ -2,9 +2,9 @@
 # Build the hyrax-dependencies binary tar ball for use with libdap and BES
 # debian builds.
 
-(prefix=/root/install)
-
 set -eu
+
+export prefix=/root/install
 
 printenv
 
