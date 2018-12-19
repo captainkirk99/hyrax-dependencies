@@ -13,7 +13,6 @@ compiler: gcc
 branches:
   only:
   - master
-  - debian
 
 addons:
   apt:

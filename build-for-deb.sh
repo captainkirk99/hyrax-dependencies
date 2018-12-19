@@ -4,5 +4,9 @@
 
 set -eu
 
+printenv
+
+
+(prefix=/root/install)
 (cd /root/hyrax-dependencies && make -j4 for-static-rpm)
 
