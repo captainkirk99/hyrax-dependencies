@@ -1,0 +1,11 @@
+FROM ubuntu:trusty
+
+WORKDIR /root
+
+RUN apt-get -y update
+RUN apt-get -y install libcurl4-openssl-dev make g++ gcc libcppunit-dev libbz2-dev libssl-dev uuid-dev libtool
+RUN apt-get -y install libgdal-dev flex bison autoconf automake libreadline-dev libicu-dev libxml2-dev libjpeg-dev bzip2
+
+ENV HOME /root
+ENV prefix $HOME/install
+ENV PATH $prefix/bin:$prefix/deps/bin:$PATH

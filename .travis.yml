@@ -13,7 +13,6 @@ compiler: gcc
 branches:
   only:
   - master
-  - travis
 
 addons:
   apt:
@@ -44,8 +43,8 @@ jobs:
     script:
     - export DEPS_BUILD=ubuntu14
     - mkdir -p $HOME/ubuntu14/install
-    - export prefix=$HOME/ubuntu14/install
-    - make -j7 for-travis CONFIGURE_FLAGS=--disable-shared 
+    - docker run --volume $HOME/ubuntu14/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
+             opendap/ubuntu14_hyrax_build:1.1 /root/hyrax-dependencies/build-for-deb.sh
   - stage: package
     script: 
     - export DEPS_BUILD=centos6
