@@ -73,7 +73,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.18.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-1.19.tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
