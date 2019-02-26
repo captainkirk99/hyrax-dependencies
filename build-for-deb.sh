@@ -4,5 +4,9 @@
 
 set -eu
 
+export prefix=/root/install
+
+printenv
+
 (cd /root/hyrax-dependencies && make -j4 for-static-rpm)
 
