@@ -90,8 +90,9 @@ check:
 cmake=cmake-3.11.3
 cmake_dist=$(cmake).tar.gz
 
-bison=bison-3.0.4-osx-patch
-bison_dist=$(bison).tar.gz
+# bison=bison-3.0.4-osx-patch
+bison=bison-3.3
+bison_dist=$(bison).tar.xz
 
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
