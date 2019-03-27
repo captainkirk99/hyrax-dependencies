@@ -140,6 +140,12 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
+stare=STARE
+stare_dist=$(stare).tar.gz
+
+cute=CUTE
+cute_dist=$(cute).tar.gz
+
 # NB The environment variable $prefix is assumed to be set.
 src = src
 
@@ -595,4 +601,28 @@ icu-really-clean: icu-clean
 .PHONY: icu
 icu: icu-install-stamp
 
+#CUTE
+cute_src=$(src)/$(cute)
+cute_prefix=$(prefix)/deps
+
+$(cute_src)-stamp:
+	tar -xzf downloads/$(cute_dist) -C $(src)
+	echo timestamp > $(cute_src)-stamp
+	
+#STARE
+#stare_src=$(src)/$(stare)
+#stare_prefix=$(prefix)/deps
+
+#$(stare_src)-stamp:
+#	tar -xzf downloads/$(stare_dist) -C $(src)
+#	echo timestamp > $(stare_src)-stamp
+
+#stare-configure-stamp:  $(stare_src)-stamp
+#	(cd $(stare_src) && ./configure)
+#	echo timestamp > stare-configure-stamp
+	
+#stare-compile-stamp: stare-configure-stamp
+#	(cd $(stare_src) && $(MAKE))
+#	(cd $(stare_src) && cmake . -D
+#	echo timestamp > stare-compile-stamp
 

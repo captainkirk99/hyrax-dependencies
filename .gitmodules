@@ -1,0 +1,3 @@
+[submodule "src/STARE"]
+	path = src/STARE
+	url = https://github.com/michaelleerilee/STARE.git
