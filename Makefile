@@ -603,26 +603,8 @@ icu: icu-install-stamp
 
 #CUTE
 cute_src=$(src)/$(cute)
-cute_prefix=$(prefix)/deps
 
 $(cute_src)-stamp:
 	tar -xzf downloads/$(cute_dist) -C $(src)
 	echo timestamp > $(cute_src)-stamp
-	
-#STARE
-#stare_src=$(src)/$(stare)
-#stare_prefix=$(prefix)/deps
-
-#$(stare_src)-stamp:
-#	tar -xzf downloads/$(stare_dist) -C $(src)
-#	echo timestamp > $(stare_src)-stamp
-
-#stare-configure-stamp:  $(stare_src)-stamp
-#	(cd $(stare_src) && ./configure)
-#	echo timestamp > stare-configure-stamp
-	
-#stare-compile-stamp: stare-configure-stamp
-#	(cd $(stare_src) && $(MAKE))
-#	(cd $(stare_src) && cmake . -D
-#	echo timestamp > stare-compile-stamp
 
