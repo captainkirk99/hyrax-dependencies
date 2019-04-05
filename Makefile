@@ -109,6 +109,8 @@ openjpeg_dist=$(openjpeg).tar.gz
 
 # The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
+# gdal2=gdal-2.3.3
+# gdal2=gdal-2.4.0
 gdal2_dist=$(gdal2).tar.xz
 
 gridfields=gridfields-1.0.5
