@@ -140,9 +140,6 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE
-stare_dist=$(stare).tar.gz
-
 cute=CUTE
 cute_dist=$(cute).tar.gz
 
@@ -607,4 +604,15 @@ cute_src=$(src)/$(cute)
 $(cute_src)-stamp:
 	tar -xzf downloads/$(cute_dist) -C $(src)
 	echo timestamp > $(cute_src)-stamp
-
+	
+cute-install-stamp: $(cute_src)-stamp
+	mkdir -p $(prefix)/include/CUTE
+	cp $(cute_src)/cute/*.h $(prefix)/include/CUTE
+	echo timestamp > cute-install-stamp
+	
+#STARE
+stare-install-stamp:
+	cd src/STARE
+	git checkout NewAPI && git pull
+	./configure
+	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE && make
