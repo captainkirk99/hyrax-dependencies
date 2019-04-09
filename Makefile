@@ -16,7 +16,7 @@
 # (e.g., cmake).
 
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
+deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu cute
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -610,9 +610,19 @@ cute-install-stamp: $(cute_src)-stamp
 	cp $(cute_src)/cute/*.h $(prefix)/include/CUTE
 	echo timestamp > cute-install-stamp
 	
+.PHONY: cute
+cute: cute-install-stamp
+
 #STARE
-stare-install-stamp:
-	cd src/STARE
-	git checkout NewAPI && git pull
-	./configure
-	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE && make
+stare-configure-stamp:
+	cd src/STARE && git submodule update --init
+	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE)
+	echo timestamp > stare-configure-stamp
+stare-install-stamp: stare-configure-stamp
+	#git checkout NewAPI && git pull
+	make
+	make install
+	echo timestamp > stare-install-stamp
+	
+.PHONY: stare
+stare: stare-install-stamp
