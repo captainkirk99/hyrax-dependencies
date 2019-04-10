@@ -629,6 +629,7 @@ stare_prefix=$(prefix)/deps
 stare-configure-stamp:
 	git submodule update --init
 	mkdir -p $(stare_src)/build
+	./configure
 	(cd $(stare_src)/build && cmake .. \
 		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix) \
 		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include/CUTE)
