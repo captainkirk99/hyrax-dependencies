@@ -34,7 +34,7 @@ all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
+travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -610,8 +610,8 @@ cute-install-stamp: $(cute_src)-stamp
 	cp $(cute_src)/cute/*.h $(prefix)/include/CUTE
 	echo timestamp > cute-install-stamp
 	
-.PHONY: cute
-cute: cute-install-stamp
+#.PHONY: cute
+#cute: cute-install-stamp
 
 #STARE
 stare-configure-stamp:
@@ -625,4 +625,4 @@ stare-install-stamp: stare-configure-stamp
 	echo timestamp > stare-install-stamp
 	
 .PHONY: stare
-stare: stare-install-stamp
+stare: cute-install-stamp stare-install-stamp
