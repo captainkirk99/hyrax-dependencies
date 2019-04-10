@@ -600,29 +600,56 @@ icu: icu-install-stamp
 
 #CUTE
 cute_src=$(src)/$(cute)
+cute_prefix=$(prefix)/deps
 
 $(cute_src)-stamp:
 	tar -xzf downloads/$(cute_dist) -C $(src)
 	echo timestamp > $(cute_src)-stamp
-	
+
 cute-install-stamp: $(cute_src)-stamp
-	mkdir -p $(prefix)/include/CUTE
-	cp $(cute_src)/cute/*.h $(prefix)/include/CUTE
+	mkdir -p $(cute_prefix)/include/CUTE
+	cp $(cute_src)/cute/*.h $(cute_prefix)/include/CUTE
 	echo timestamp > cute-install-stamp
-	
-#.PHONY: cute
-#cute: cute-install-stamp
+
+cute-clean:
+	-rm cute-*-stamp
+
+cute-really-clean: cute-clean
+	-rm $(src)/$(cute)-stamp
+	-rm -rf $(src)/$(cute)
+	-rm -rf $(cute_prefix)/include/CUTE
+
+.PHONY: cute
+cute: cute-install-stamp
+
+stare_src=src/STARE
+stare_prefix=$(prefix)/deps
 
 #STARE
 stare-configure-stamp:
-	cd src/STARE && git submodule update --init
-	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE
+	git submodule update --init
+	mkdir -p $(stare_src)/build
+	(cd $(stare_src)/build && cmake .. \
+		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix) \
+		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include/CUTE)
 	echo timestamp > stare-configure-stamp
+
+stare-compile-stamp: stare-configure-stamp
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS))
+	echo timestamp > stare-compile-stamp
+
 stare-install-stamp: stare-configure-stamp
-	#git checkout NewAPI && git pull
-	make
-	make install
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS) install)
 	echo timestamp > stare-install-stamp
-	
+
+stare-clean:
+	-rm stare-*-stamp
+	-(cd  $(stare_src)/build && $(MAKE) $(MFLAGS) clean)
+	-rm -rf $(stare_src)/build
+
+stare-really-clean: stare-clean
+	-rm $(src)/$(stare)-stamp
+	-rm -rf $(src)/$(stare)
+
 .PHONY: stare
 stare: cute-install-stamp stare-install-stamp
