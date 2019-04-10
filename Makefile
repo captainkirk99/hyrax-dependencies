@@ -616,7 +616,7 @@ cute-install-stamp: $(cute_src)-stamp
 #STARE
 stare-configure-stamp:
 	cd src/STARE && git submodule update --init
-	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE)
+	cmake . -DCUTE_INCLUDE_DIR=$(prefix)/include/CUTE
 	echo timestamp > stare-configure-stamp
 stare-install-stamp: stare-configure-stamp
 	#git checkout NewAPI && git pull
