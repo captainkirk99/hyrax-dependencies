@@ -609,6 +609,7 @@ $(cute_src)-stamp:
 cute-install-stamp: $(cute_src)-stamp
 	mkdir -p $(cute_prefix)/include/CUTE
 	cp $(cute_src)/cute/*.h $(cute_prefix)/include/CUTE
+	ls $(cute_prefix)/include/CUTE
 	echo timestamp > cute-install-stamp
 
 cute-clean:
@@ -628,11 +629,10 @@ stare_prefix=$(prefix)/deps
 #STARE
 stare-configure-stamp:
 	git submodule update --init
-	TOPDIR=`pwd`
 	mkdir -p $(stare_src)/build
 	(cd $(stare_src)/build && cmake .. \
 		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix) \
-		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include)
+		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include/)
 	echo timestamp > stare-configure-stamp
 
 stare-install-stamp: stare-configure-stamp
