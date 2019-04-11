@@ -607,9 +607,8 @@ $(cute_src)-stamp:
 	echo timestamp > $(cute_src)-stamp
 
 cute-install-stamp: $(cute_src)-stamp
-	mkdir -p $(cute_prefix)/include/CUTE
-	cp $(cute_src)/cute/*.h $(cute_prefix)/include/CUTE
-	ls $(cute_prefix)/include/CUTE
+	mkdir -p $(cute_prefix)/include/cute
+	cp $(cute_src)/cute/*.h $(cute_prefix)/include/cute
 	echo timestamp > cute-install-stamp
 
 cute-clean:
@@ -618,7 +617,7 @@ cute-clean:
 cute-really-clean: cute-clean
 	-rm $(src)/$(cute)-stamp
 	-rm -rf $(src)/$(cute)
-	-rm -rf $(cute_prefix)/include/CUTE
+	-rm -rf $(cute_prefix)/include/cute
 
 .PHONY: cute
 cute: cute-install-stamp
