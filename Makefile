@@ -622,7 +622,7 @@ cute-really-clean: cute-clean
 .PHONY: cute
 cute: cute-install-stamp
 
-stare_src=src/STARE
+stare_src=src/STARE_OPENDAP/STARE
 stare_prefix=$(prefix)/deps
 
 #STARE
@@ -634,8 +634,12 @@ stare-configure-stamp:
 		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include/)
 	echo timestamp > stare-configure-stamp
 
-stare-install-stamp: stare-configure-stamp
+stare-compile-stamp: stare-configure-stamp
 	(cd $(stare_src)/build && $(MAKE))
+	echo timestamp > stare-compile-stamp
+	
+stare-install-stamp: stare-compile-stamp
+	(cd $(stare_src)/build && $(MAKE) install)
 	echo timestamp > stare-install-stamp
 
 stare-clean:
