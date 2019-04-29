@@ -1,3 +1,6 @@
 [submodule "src/STARE"]
 	path = src/STARE
 	url = https://github.com/michaelleerilee/STARE.git
+[submodule "src/STARE_OPENDAP/STARE"]
+	path = src/STARE_OPENDAP/STARE
+	url = https://github.com/OPENDAP/STARE.git
