@@ -598,30 +598,6 @@ icu-really-clean: icu-clean
 .PHONY: icu
 icu: icu-install-stamp
 
-#CUTE
-cute_src=$(src)/$(cute)
-cute_prefix=$(prefix)/deps
-
-$(cute_src)-stamp:
-	tar -xzf downloads/$(cute_dist) -C $(src)
-	echo timestamp > $(cute_src)-stamp
-
-cute-install-stamp: $(cute_src)-stamp
-	mkdir -p $(cute_prefix)/include/cute
-	cp $(cute_src)/cute/*.h $(cute_prefix)/include/cute
-	echo timestamp > cute-install-stamp
-
-cute-clean:
-	-rm cute-*-stamp
-
-cute-really-clean: cute-clean
-	-rm $(src)/$(cute)-stamp
-	-rm -rf $(src)/$(cute)
-	-rm -rf $(cute_prefix)/include/cute
-
-.PHONY: cute
-cute: cute-install-stamp
-
 stare_src=src/STARE_OPENDAP/STARE
 stare_prefix=$(prefix)/deps
 
@@ -630,8 +606,7 @@ stare-configure-stamp:
 	git submodule update --init
 	mkdir -p $(stare_src)/build
 	(cd $(stare_src)/build && cmake .. \
-		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix) \
-		-DCUTE_INCLUDE_DIR=$(cute_prefix)/include/)
+		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix))
 	echo timestamp > stare-configure-stamp
 
 stare-compile-stamp: stare-configure-stamp
