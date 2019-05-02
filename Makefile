@@ -34,7 +34,7 @@ all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
+travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -596,4 +596,33 @@ icu-really-clean: icu-clean
 .PHONY: icu
 icu: icu-install-stamp
 
+stare_src=src/STARE_OPENDAP/STARE
+stare_prefix=$(prefix)/deps
 
+#STARE
+stare-configure-stamp:
+	git submodule update --init
+	mkdir -p $(stare_src)/build
+	(cd $(stare_src)/build && cmake .. \
+		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix))
+	echo timestamp > stare-configure-stamp
+
+stare-compile-stamp: stare-configure-stamp
+	(cd $(stare_src)/build && $(MAKE))
+	echo timestamp > stare-compile-stamp
+	
+stare-install-stamp: stare-compile-stamp
+	(cd $(stare_src)/build && $(MAKE) install)
+	echo timestamp > stare-install-stamp
+
+stare-clean:
+	-rm stare-*-stamp
+	-(cd  $(stare_src)/build && $(MAKE) $(MFLAGS) clean)
+	-rm -rf $(stare_src)/build
+
+stare-really-clean: stare-clean
+	-rm $(src)/$(stare)-stamp
+	-rm -rf $(src)/$(stare)
+
+.PHONY: stare
+stare: stare-install-stamp
