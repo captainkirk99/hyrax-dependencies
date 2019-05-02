@@ -140,9 +140,6 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-cute=CUTE
-cute_dist=$(cute).tar.gz
-
 # NB The environment variable $prefix is assumed to be set.
 src = src
 
@@ -627,4 +624,4 @@ stare-really-clean: stare-clean
 	-rm -rf $(src)/$(stare)
 
 .PHONY: stare
-stare: cute-install-stamp stare-install-stamp
+stare: stare-install-stamp
