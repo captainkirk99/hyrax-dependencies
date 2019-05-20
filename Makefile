@@ -101,6 +101,11 @@ jpeg_dist=jpegsrc.v6b.tar.gz
 openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
+# This is a new and (4/2019) experimental API. Don't build it by
+# default. It will break the HDFEOS code in the hdf4 handler. jhrg 4/24/2019
+proj=proj-6.0.0
+proj_dist=$(proj).tar.gz
+
 # The old version... jhrg 4/5/16
 # if we drop back to a 1.x version of gdal, then we should go for
 # 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
@@ -109,6 +114,8 @@ openjpeg_dist=$(openjpeg).tar.gz
 
 # The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
+# gdal2=gdal-2.3.3
+# gdal2=gdal-2.4.0
 gdal2_dist=$(gdal2).tar.xz
 
 gridfields=gridfields-1.0.5
@@ -120,17 +127,17 @@ hdf4_dist=$(hdf4).tar.gz
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
-hdf5=hdf5-1.8.17-chunks
-hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
+#hdf5=hdf5-1.8.17-chunks
+#hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
 
 # hdf5=hdf5-1.8.16
 # hdf5=hdf5-1.8.20
 # hdf5_dist=$(hdf5).tar.bz2
 
-# hdf5=hdf5-1.10.2
-# hdf5_dist=$(hdf5).tar.bz2
-# Use this until we fix the handler...
-# hdf5_configure_flags=--with-default-api-version=v18
+hdf5=hdf5-1.10.5
+hdf5_dist=$(hdf5).tar.bz2
+#Use this until we fix the handler...
+#hdf5_configure_flags=--with-default-api-version=v18
 
 netcdf4=netcdf-c-4.4.1.1
 netcdf4_dist=$(netcdf4).tar.gz
@@ -140,6 +147,9 @@ fits_dist=$(fits)3270.tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
+
+stare=STARE-0.1.2
+stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
 src = src
@@ -282,6 +292,37 @@ openjpeg-really-clean: openjpeg-clean
 
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
+
+# proj4
+proj_src=$(src)/$(proj)
+proj_prefix=$(prefix)/deps
+
+$(proj_src)-stamp:
+	tar -xzf downloads/$(proj_dist) -C $(src)
+	echo timestamp > $(proj_src)-stamp
+
+proj-configure-stamp:  $(proj_src)-stamp
+	(cd $(proj_src) && ./configure --prefix=$(proj_prefix) )
+	echo timestamp > proj-configure-stamp
+
+proj-compile-stamp: proj-configure-stamp
+	(cd $(proj_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > proj-compile-stamp
+
+proj-install-stamp: proj-compile-stamp
+	(cd $(proj_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > proj-install-stamp
+
+proj-clean:
+	-rm proj-*-stamp
+	-(cd  $(proj_src) && $(MAKE) $(MFLAGS) uninstall clean)
+
+proj-really-clean: proj-clean
+	-rm $(src)/proj-*-stamp	
+	-rm -rf $(proj_src)
+
+.PHONY: proj
+proj: proj-install-stamp
 
 # GDAL 
 gdal_src=$(src)/$(gdal)
@@ -596,23 +637,26 @@ icu-really-clean: icu-clean
 .PHONY: icu
 icu: icu-install-stamp
 
-stare_src=src/STARE_OPENDAP/STARE
+stare_src=src/$(stare)
 stare_prefix=$(prefix)/deps
 
 #STARE
-stare-configure-stamp:
-	git submodule update --init
+$(src)/$(stare)-stamp:
+	tar -xjf downloads/$(stare_dist) -C $(src)
+	echo timestamp > $(src)/$(stare)-stamp
+
+stare-configure-stamp: $(src)/$(stare)-stamp
 	mkdir -p $(stare_src)/build
 	(cd $(stare_src)/build && cmake .. \
 		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix))
 	echo timestamp > stare-configure-stamp
 
 stare-compile-stamp: stare-configure-stamp
-	(cd $(stare_src)/build && $(MAKE))
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS))
 	echo timestamp > stare-compile-stamp
-	
+
 stare-install-stamp: stare-compile-stamp
-	(cd $(stare_src)/build && $(MAKE) install)
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS) install)
 	echo timestamp > stare-install-stamp
 
 stare-clean:
