@@ -148,6 +148,9 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
+stare=STARE-0.1.2
+stare_dist=$(stare).tar.bz2
+
 # NB The environment variable $prefix is assumed to be set.
 src = src
 
@@ -634,23 +637,26 @@ icu-really-clean: icu-clean
 .PHONY: icu
 icu: icu-install-stamp
 
-stare_src=src/STARE_OPENDAP/STARE
+stare_src=src/$(stare)
 stare_prefix=$(prefix)/deps
 
 #STARE
-stare-configure-stamp:
-	git submodule update --init
+$(src)/$(stare)-stamp:
+	tar -xzf downloads/$(stare_dist) -C $(src)
+	echo timestamp > $(src)/$(stare)-stamp
+
+stare-configure-stamp: $(src)/$(stare)-stamp
 	mkdir -p $(stare_src)/build
 	(cd $(stare_src)/build && cmake .. \
 		-DCMAKE_INSTALL_PREFIX:PATH=$(stare_prefix))
 	echo timestamp > stare-configure-stamp
 
 stare-compile-stamp: stare-configure-stamp
-	(cd $(stare_src)/build && $(MAKE))
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS))
 	echo timestamp > stare-compile-stamp
-	
+
 stare-install-stamp: stare-compile-stamp
-	(cd $(stare_src)/build && $(MAKE) install)
+	(cd $(stare_src)/build && $(MAKE) $(MFLAGS) install)
 	echo timestamp > stare-install-stamp
 
 stare-clean:
