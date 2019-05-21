@@ -127,15 +127,15 @@ hdf4_dist=$(hdf4).tar.gz
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
-#hdf5=hdf5-1.8.17-chunks
-#hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
+hdf5=hdf5-1.8.17-chunks
+hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
 
 # hdf5=hdf5-1.8.16
 # hdf5=hdf5-1.8.20
 # hdf5_dist=$(hdf5).tar.bz2
 
-hdf5=hdf5-1.10.5
-hdf5_dist=$(hdf5).tar.bz2
+#hdf5=hdf5-1.10.5
+#hdf5_dist=$(hdf5).tar.bz2
 #Use this until we fix the handler...
 #hdf5_configure_flags=--with-default-api-version=v18
 
