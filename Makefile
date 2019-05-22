@@ -16,7 +16,7 @@
 # (e.g., cmake).
 
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu
+deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare icu
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -27,7 +27,7 @@ deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits 
 # Removed cmake with breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
+all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -59,7 +59,8 @@ prefix-set:
 # CONFIGURE_FLAGS now set by this target - no need to remember to do
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
-	for d in $(all_static_deps); do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
+	for d in $(all_static_deps); \
+		do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
@@ -127,17 +128,15 @@ hdf4_dist=$(hdf4).tar.gz
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
-hdf5=hdf5-1.8.17-chunks
-hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
+# hdf5=hdf5-1.8.17-chunks
+# hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
 
 # hdf5=hdf5-1.8.16
 # hdf5=hdf5-1.8.20
 # hdf5_dist=$(hdf5).tar.bz2
 
-#hdf5=hdf5-1.10.5
-#hdf5_dist=$(hdf5).tar.bz2
-#Use this until we fix the handler...
-#hdf5_configure_flags=--with-default-api-version=v18
+hdf5=hdf5-1.10.5
+hdf5_dist=$(hdf5).tar.bz2
 
 netcdf4=netcdf-c-4.4.1.1
 netcdf4_dist=$(netcdf4).tar.gz
