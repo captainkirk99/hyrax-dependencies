@@ -617,7 +617,7 @@ icu-configure-stamp:  $(src)/$(icu)-stamp
 	echo timestamp > icu-configure-stamp
 
 icu-compile-stamp: icu-configure-stamp
-	(cd $(icu_src) && $(MAKE) $(MFLAGS))
+	(cd $(icu_src) && $(MAKE) $(MFLAGS) -j1)
 	echo timestamp > icu-compile-stamp
 
 # Force -j1 for install
