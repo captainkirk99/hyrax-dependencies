@@ -1,0 +1,598 @@
+2019-06-28  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #16 from OPENDAP/stare_fix
+	Made a new dist with the original STARE repo (along with the erfa changes I added to the STARE build).
+
+	Removed the older dist
+
+	Made a new dist with the original STARE repo (along with the erfa changes I added to the STARE build).
+
+2019-05-23  James Gallagher  <jgallagher@opendap.org>
+
+	Merge pull request #14 from OPENDAP/hdf-1.10
+	Hdf 1.10
+
+	Oddly, 'stare' wound up back on the static build targets. Removed.
+
+	icu no longer builds in parallel - that fails on OSX
+
+	Merge branch 'master' into hdf-1.10
+
+	Merge pull request #13 from OPENDAP/new-stare
+	Build using the new STARE 0.3.0 that works with cmake 2.8
+
+	Switched to STARE 0.3.0. I'm limiting the STARE build.
+	Build STARE for the CI build used for tests, etc., but not for the
+	hyrax deps used to make the code that forms packages. STARE won't
+	build on all our platforms because C++-11 support is not present on
+	CentOS 6.
+
+2019-05-22  James Gallagher  <jgallagher@opendap.org>
+
+	Another try - remove 3.x cmake dependency
+
+	New version of STARE
+
+	Build using the new STARE 0.2.0 that may work with cmake 2.8
+
+	Added stare build for travis and all-static-deps
+
+	Build hadf5 1.10
+
+2019-05-21  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #12 from OPENDAP/stare_fix
+	Makefile was modified to use hdf5-1.10.5, should be hdf5-1.8.17 until…
+
+	Makefile was modified to use hdf5-1.10.5, should be hdf5-1.8.17 until 1.10 is ready to use.
+
+2019-05-20  James Gallagher  <jgallagher@opendap.org>
+
+	Merge pull request #11 from OPENDAP/stare_fix
+	Stare fix
+
+2019-05-20  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	changed the options for tar since we're using a .tar.bz2 tar ball
+
+	Added the new STARE tar ball with the SpatialGeneral fix.
+
+2019-05-20  James Gallagher  <jgallagher@opendap.org>
+
+	Removed CUTE tar ball
+
+	remove stare submodules
+
+	Stare build now uses the 'dist' file.
+
+2019-05-17  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	GDAL2 hacks, including proj stuff
+
+2019-05-02  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #10 from OPENDAP/stare
+	Added STARE module to /downloads. The makefile will now also install STARE.
+
+	Forgot to take out the cute-install-stamp
+
+	Took out the installation instructions for CUTE (because CUTE library is now included in STARE.
+
+2019-04-29  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Added the OPENDAP STARE submodule
+
+	Modified makefile and added the OPeNDAP forked repository of STARE
+
+2019-04-11  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	the cute directory needs to be lowercase instead of uppercase.
+
+	Testing makefile again, don't know why cute.h isn't being found
+
+	Modified the CUTE_INCLUDE_DIR to be just include/ and not include/CUTE/
+
+	Took out the ./configure, might not be needed with cmake.
+
+2019-04-10  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	syntax fixes. May need to add boost, not sure
+
+	./configure was missing
+
+	Took out the make install, stare does not have an install
+
+2019-04-10  James Gallagher  <jgallagher@opendap.org>
+
+	Hacked the Makefile more
+	Added clean and really-clean targets for bit cute and stare; changed
+	some of the build commands to mirror the other dependencies.
+
+2019-04-10  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Forgot to remove a ')'
+
+	Added stare to travis_deps, took cute out of deps and made it a dependency for when stare is built.
+
+2019-04-09  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Added cute to the deps (and travis_deps). Did NOT add stare to the deps, but it should be able to be made manually running "make stare". May still need some tweaking.
+
+2019-04-08  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Added the CUTE.tar.gz. Modified the Makefile to install CUTE and to update and use the correct version of STARE
+
+2019-04-05  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Added gdal versions as comments.
+	[skip ci]
+
+2019-03-28  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Cleanup of the Makefile
+
+2019-03-27  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	added STARE module, as well as the CUTE library to /downloads
+
+2019-03-05  James Gallagher  <jgallagher@opendap.org>
+
+	Removed old bison 3.0.4; added hdf5 1.10.5
+	New dhf5 library is not yet built or used, just added.
+
+2019-02-26  James Gallagher  <jgallagher@opendap.org>
+
+	Bumped up the version to 1.20 given that there's a new version of bison (3.3)
+	This version of bison does not have OSX build issues.
+
+	Merge branch 'debian'
+
+	Merge branch 'debian' of https://github.com/opendap/hyrax-dependencies into debian
+
+	New version of bison that works on OSX without a patch
+
+2019-02-20  Nathan Potter  <ndp@opendap.org>
+
+	Bumped verision number for release
+
+2019-01-04  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #9 from OPENDAP/debian
+	Added the "bc" package
+
+	Added the "bc" package
+
+2018-12-21  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #8 from OPENDAP/debian
+	Moved the debian packages from libdap travis.yml to Dockerfile
+
+	Moved the debian packages from libdap travis.yml to Dockerfile
+
+	Merge pull request #7 from OPENDAP/debian
+	Added the cmake and xz-utils package
+
+2018-12-21  Kodi Neumiller  <kodi@Udays-MacBook-Pro.local>
+
+	Added xz-utils package to hopefully unzip the gdal tar
+
+2018-12-20  Kodi Neumiller  <kodi@Udays-MacBook-Pro.local>
+
+	Took out the libgdal-dev package. The package may have broken the build from the deps and couldve put shared libs on the path.
+
+	Forgot to change the version number for travis...
+
+	Added the cmake package
+
+2018-12-20  Kodi Neumiller  <kneumiller@mtech.edu>
+
+	Merge pull request #6 from OPENDAP/debian
+	Made a Docker version for Ubuntu14.
+
+2018-12-19  Kodi Neumiller  <kodi@Udays-MacBook-Pro.local>
+
+	Updated the docker version for the ubuntu build
+
+	Added the appropriate packages (was missing some)
+
+	Added "export" and took out parantheses
+
+	Moved where prefix is set
+
+	Set prefix in the shell script and got rid of travis building for the debian branch.
+
+2018-12-18  Kodi Neumiller  <kodi@Udays-MacBook-Pro.local>
+
+	Merge branch 'debian' of https://github.com/opendap/hyrax-dependencies into debian
+
+	Gave execute privaleges to the deb.sh
+
+2018-12-18  James Gallagher  <jgallagher@opendap.org>
+
+	Minor edits to travis.yml; removed tabs and 'travis' branch name
+	I stopped using the 'travis' branch to test these builds tocut down
+	on branch proliferation.
+
+2018-12-18  Kodi Neumiller  <kodi@Udays-MacBook-Pro.local>
+
+	Added debian branch to travis build
+
+	Made a Docker version for Ubuntu14.
+
+2018-11-15  Cloud User  <centos@ip-172-31-47-159.ec2.internal>
+
+	Update for version 1.18 which supports Hyrax 1.15
+
+2018-10-23  James Gallagher  <jgallagher@opendap.org>
+
+	Final changes to the dependencies tar balls
+
+2018-10-22  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies.git
+	Conflicts:
+		docker/Dockerfile
+	[skip ci]
+
+	fixes to the Dockerfile
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Changed RPM-support binaries to use newer containers
+
+2018-10-20  James Gallagher  <jgallagher@opendap.org>
+
+	Fixed container tag (1 --> 1.0)
+
+2018-10-19  James Gallagher  <jgallagher@opendap.org>
+
+	Use the container tag (don't rely on the 'latest' tag)
+
+	Edit /home to /root in the build-for-rpm.sh script.
+	There's much coupling between the docker file, Travis and the script...
+
+	Changed /home to /root
+
+	Updates for the new versions of the c6 and c7 build containers
+
+2018-10-18  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'travis'
+	[skip ci]
+
+	added HOME env var to Dockerfile used to build the containers
+	The docker containers built using the Dockerfile in docker/ are
+	going to be usable for the libdap and BES builds.
+
+2018-10-16  James Gallagher  <jgallagher@opendap.org>
+
+	Edited the Dockerfile so I could update the build containers
+	We're using these containers for all of the builds (libdap4 and BES
+	in addition to the hyrax-deps).
+	[skip ci]
+
+2018-10-15  James Gallagher  <jgallagher@opendap.org>
+
+	Confused the travis and all-static-rpm builds
+	travis was buildiing static libs - should not have been; all-static-rpms
+	was building dynamic. Fixed.
+
+	Merged from travis. Now build four 'binaries.
+	One with dynamic libs for the plain travis builds and three
+	with static libs for the RPM/DEB packages.
+	[skip ci]
+	Changes to be committed:
+	renamed:    apache-tomcat-7.0.57.tar.gz -> apache-tomcat-8.5.34.tar.gz
+
+	Now build all four binary packages...
+
+	Shell syntax fix in the travis yml before_deploy block
+
+2018-10-14  James Gallagher  <jgallagher@opendap.org>
+
+	Correct shell syntax in before_deploy block
+
+	Fix for before_deploy: it is run after every job stage/script
+
+	The Makefile now builds static packages for travis
+	The deps are used for the debian packages.
+
+	Fix for centos6-static tar ball paths
+	The tar ball must be built so that it can be unpacked into $prefix
+
+	Syntax error fix for line continuation
+
+	Travis build now includes CentOS6 RPM using docker
+	The docker build uses a container in the opendap docker hub repo.
+
+	Added build-for-rpm.sh
+
+	Switched to jobs in prep for multiple container builds.
+
+2018-10-11  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+2018-10-10  James Gallagher  <jgallagher@opendap.org>
+
+	Removed cmake fom all-static-rpms
+	[skip ci]
+
+2018-09-21  Nathan Potter  <ndp@opendap.org>
+
+	Revert "Revert "Moved up to cmake 3""
+	This reverts commit 3d9ddeb5b3b51611506a4c4caaf1f779b87d8685.
+
+	Revert "Moved up to cmake 3"
+	This reverts commit c0dc03cc40c174d6a8008b6aa572b2e65c4597e4.
+
+2018-06-01  James Gallagher  <jgallagher@opendap.org>
+
+	Moved up to cmake 3
+
+2018-04-23  James Gallagher  <jgallagher@opendap.org>
+
+	Corrected the hdf5 1.8.17 library code and Makefile.
+
+2018-04-20  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Added special version of hdf5-1.8.17 as modified by Kent Yang
+
+2018-02-24  James Gallagher  <jgallagher@opendap.org>
+
+	Merge pull request #3 from OPENDAP/travis
+	testing new prefix of $HOME/install
+
+	testing new prefix of $HOME/install
+
+2018-02-23  James Gallagher  <jgallagher@opendap.org>
+
+	Merge pull request #2 from OPENDAP/travis
+	Travis
+
+	travis fixed?
+
+	travis testing
+
+	travis testing
+
+	travis testing
+
+	travis testing
+
+	travis testing
+
+2018-02-22  James Gallagher  <jgallagher@opendap.org>
+
+	Merge pull request #1 from OPENDAP/travis
+	Travis
+
+	Syntax fix for travis.yml
+
+	Working?
+
+	Still testing
+
+	Still testing
+
+	Test deployment...
+
+	Test...
+
+	Test deployment
+
+	Added a deploy phase to travis file - test with a push
+
+2018-02-14  James Gallagher  <jgallagher@opendap.org>
+
+	Minor change to travis.yml
+	[skip ci]
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Modified Makefile to not list dependencies - it's a nice idea,
+	...but this is a pretty 'cooked' build process
+
+2018-01-27  James Gallagher  <jgallagher@opendap.org>
+
+	Added dummy install and check targets.
+	This for inclusion in the 'combined' github repo for a more streamlined
+	hyrax build
+
+2017-12-06  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Added a bison tar ball that is patched for OSX 10.13 and Xcode 9.x
+
+2017-11-30  James Gallagher  <jgallagher@opendap.org>
+
+	Changed the travis build so it uses the 'for-travis' target.
+
+	Removed netcdf 4.3.3.1 in favor of 4.4.x.y; Minor edits to the Makefile
+
+	Added two new distributions
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Updated. Bumped up the dist version to 1.16
+
+2016-09-23  James Gallagher  <jgallagher@opendap.org>
+
+	Fixed theMakefile for gdal2 and the 'xz' compresion
+	Use -J with tar for 'xz' compression.
+
+2016-08-24  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	 Changes to be committed: 	modified:   Makefile 	modified:   README 	deleted:    downloads/gdal-1.10.0.tar.gz 	new file:   downloads/gdal-2.1.1.tar.xz 	deleted:    downloads/hdf5-1.8.6.tar.gz 	deleted:    downloads/openjpeg-2.0.0.tar.gz 	new file:   downloads/openjpeg-2.1.1.tar.gz
+
+2016-06-06  James Gallagher  <jgallagher@opendap.org>
+
+	Version 1.15 for Hyrax 1.13.1
+
+2016-06-03  James Gallagher  <jgallagher@opendap.org>
+
+	Updates
+
+2016-06-01  James Gallagher  <jgallagher@opendap.org>
+
+	Edit of Makefile for HDF5 bz2 on linux
+
+2016-05-11  James Gallagher  <jgallagher@opendap.org>
+
+	Updated versions of hdf5 and re-trenched on the gdal update
+
+2016-04-06  James Gallagher  <jgallagher@opendap.org>
+
+	Updated the version in the dist target to 1.14
+
+	Switched from hdf5-1.8.6 to 1.8.16.
+	BES builds and passesall tests. After updating, run make clean and
+	then rebuild all of this.
+
+	Added hdf5-1.8.16
+
+2016-02-08  Nathan Potter  <ndp@opendap.org>
+
+	Added (missing) HDFEOS srurce dist.
+
+2015-12-29  Nathan Potter  <ndp@opendap.org>
+
+	Updated netcdf library to nectdf-4.3.3.1
+
+2015-12-04  Nathan Potter  <ndp@opendap.org>
+
+	Updating to gridfields-1.0.5.tgz
+
+	Updating to gridfields-1.0.5.tgz
+
+	Updating to gridfields-1.0.5.tgz
+
+2015-12-03  Nathan Potter  <ndp@opendap.org>
+
+	TravisCI trigger
+
+	Changed bison distro to a tar.gz file
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	test commit
+
+	Test commit
+
+2015-12-02  Nathan Potter  <ndp@opendap.org>
+
+	Updated gridfields library.
+
+2015-09-08  James Gallagher  <jgallagher@opendap.org>
+
+	Added eclipse files
+
+2015-09-04  James Gallagher  <jgallagher@opendap.org>
+
+	Explain how this project works..
+
+	Added a target for Travis builds
+
+2015-06-15  James Gallagher  <jgallagher@opendap.org>
+
+	Modified the Makefile so that hdf4 and hdf5 use -w with the compiler
+	This will suppress warnings which, in turn, may help this build pass
+	on travis... We'll see.
+
+	Added comments to Makefile and modified travis.yml
+
+2015-06-12  James Gallagher  <jgallagher@opendap.org>
+
+	Added travis.yml
+
+2015-05-06  James Gallagher  <jgallagher@opendap.org>
+
+	Modified build to support static libs
+	This means that the deps build correct static (.a) libraries so that
+	the modules can link to them and not require odd bits of code from
+	EPEL. Of course, we can make the server's modules using only deps from
+	the RPMs and from this code using shared libs, too.
+
+2015-05-01  James Gallagher  <jgallagher@opendap.org>
+
+	Merge branch 'master' of https://github.com/opendap/hyrax-dependencies
+
+	Bumped the version of the dist to 1.11.1
+
+	Added bison 3
+
+2015-04-10  James Gallagher  <jgallagher@opendap.org>
+
+	The hdf4 install no longer include the broken ncdump/ncgen programs
+	These were being picked up by configure and were then used for
+	tests in fileout_netcdf. They don't appear to handle signed integers
+	correctly, causing false fails in the tests. I talked to Kent Yang
+	@THG and he said they were not for general use.
+
+2015-04-07  James Gallagher  <jgallagher@opendap.org>
+
+	Version 1.11
+
+2015-04-05  James Gallagher  <jgallagher@opendap.org>
+
+	Added a new target for linux and static linking.
+	This builds all of the handler deps code that cannot be found in the
+	default RHEL/CentOS 6 repos. If the CONFIGURE_FLAGS shell variable is
+	set to --disable-shared, the libraries will be static and a BES rpm
+	will thus not need any special repos for the netcdf, ..., packages.
+
+2015-03-26  James Gallagher  <jgallagher@opendap.org>
+
+	Made a special target for the rpm build.
+	The hdfeos2, gdal, gidfields and fits CentOS 6 RPMs are either missing
+	altogether or are too old for Hyrax 1.10. So, build them here for use
+	with a 'special' rpm made for NASA's use. Anyone can use this, but it
+	was made for NASA.
+
+2015-03-25  James Gallagher  <jgallagher@opendap.org>
+
+	Better targer name for rpm-only deps
+
+	Added an option: Build only the stuff we cannot get from RPM.
+	This can be used with the new NASA RPM package thingy I'm working
+	on.
+
+2014-12-29  James Gallagher  <jgallagher@opendap.org>
+
+	Added gitignore.
+
+2014-11-25  James Gallagher  <jgallagher@opendap.org>
+
+	Added empty dir 'src'; updated Makefile for deps 1.9.5
+
+	Replaced apache tomcat 7.0.29 with 7.0.57
+	Why? Because the latter works with Java 8.
+
+2014-11-11  James Gallagher  <jgallagher@opendap.org>
+
+	Copied our 'dependencies' project to git. This may not be a great idea, but we'll see how it works out..

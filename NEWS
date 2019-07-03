@@ -1,0 +1,6 @@
+Version 1.21
+
+This version includes HDF5 1.10.5 and a pre-release version of the
+STARE library.
+
+Started a NEWS and ChangeLog

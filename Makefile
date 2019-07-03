@@ -15,6 +15,8 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
+VERSION = 1.21
+
 .PHONY: $(deps)
 deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare icu
 
@@ -74,7 +76,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-1.20.tar \
+	(cd ../ && tar --create --file hyrax-dependencies-$(VERSION).tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
