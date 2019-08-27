@@ -147,7 +147,7 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE-0.6.2
+stare=STARE-0.6.3
 stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
