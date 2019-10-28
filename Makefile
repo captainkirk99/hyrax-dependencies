@@ -15,10 +15,19 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.21
+VERSION = 1.22
+
+# If $(BUILD_STARE) is not empty/undefined, build the library. This is a
+# work-around for issues with the STARE library and CentOS 6, which does not
+# support the C++-11 standard by default. jhrg 10/28/19
+ifneq ($(BUILD_STARE),)
+STARE=stare
+else
+STARE=
+endif
 
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits stare icu
+deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu $(STARE)
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -26,17 +35,17 @@ deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits 
 # rpm distribution, but also one that is easier to install because it does
 # not require any non-stock yum repo.
 #
-# Removed cmake with breaks CentOS 6 builds and can be gotten from
+# Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
+all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits
+travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -149,7 +158,7 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE-0.6.3
+stare=STARE-0.6.4
 stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
