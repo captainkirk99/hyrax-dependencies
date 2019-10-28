@@ -1,6 +1,13 @@
 
-# Build the hyrax-dependencies repo and snapshot that build if it works.
-# jhrg 2/23/18 
+# Build the hyrax-dependencies repo and snapshot that build if it works. This also builds
+# static versions of the dependencies for use with the rpm builds of the BES.
+#
+# jhrg 2/23/18
+#
+# NB: Since the STARE library is part of our research work, include it in the 'travis'
+# deps build and in the C7 version of the static deps. Don't include it in the C6 deps
+# build since C++-11 is not part of C6 by default. We're leaving STARE out of the Debian
+# package build for now as well. jhrg 10/28/19
 
 dist: trusty
 
@@ -27,9 +34,8 @@ env:
   global:
   - prefix=$HOME/install
 
-before_install:
+before_install: skip
 
-# The coverity_scan branch is built by the addon
 jobs:
   stages:
   - name: build
@@ -38,6 +44,7 @@ jobs:
   - stage: build
     script:
     - export DEPS_BUILD=travis
+    - export BUILD_STARE=yes
     - make -j7 for-travis
   - stage: package
     script:
@@ -54,11 +61,14 @@ jobs:
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
+    - export BUILD_STARE=yes
     - mkdir -p $HOME/centos7/install
+    # Note that for CentOS7, we build the dependencies so that STARE is included (but not for C6 or Debian)
+    # The Makefile checks the value of the env var $BUILD_STARE. jhrg 10/28/19
     - docker run --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
     
-# before_depoly will be run once for every job stage/script that completes
+# before_deploy will be run once for every job stage/script that completes
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
 - if test "x$DEPS_BUILD" = "xtravis"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
