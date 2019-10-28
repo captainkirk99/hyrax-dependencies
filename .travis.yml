@@ -44,8 +44,7 @@ jobs:
   - stage: build
     script:
     - export DEPS_BUILD=travis
-    - export BUILD_STARE=yes
-    - make -j7 for-travis
+    - make -j7 for-travis BUILD_STARE=yes
   - stage: package
     script:
     - export DEPS_BUILD=ubuntu14
@@ -61,11 +60,10 @@ jobs:
   - stage: package
     script: 
     - export DEPS_BUILD=centos7
-    - export BUILD_STARE=yes
     - mkdir -p $HOME/centos7/install
     # Note that for CentOS7, we build the dependencies so that STARE is included (but not for C6 or Debian)
     # The Makefile checks the value of the env var $BUILD_STARE. jhrg 10/28/19
-    - docker run --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
+    - docker run --env BUILD_STARE=yes --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
     
 # before_deploy will be run once for every job stage/script that completes
