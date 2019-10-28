@@ -12,9 +12,6 @@
 # -u: Treat unset variables in substitutions as errors (except for @ and *)
 set -eu
 
-if test -z "$1" -a x"$1" = "xstare" -o x"$1" = "xSTARE"
-then
-  export BUILD_STARE=yes
-fi
+printenv
 
 (cd /root/hyrax-dependencies && make -j4 for-static-rpm)
