@@ -20,6 +20,7 @@ compiler: gcc
 branches:
   only:
   - master
+  - travis
 
 addons:
   apt:
@@ -76,12 +77,12 @@ before_deploy:
 
 deploy:
   provider: s3
-  access_key_id: AKIAJZVG7ULONJ23KRZA
+  access_key_id: AKIA24JBYMSHQSFWAUM2
   secret_access_key:
-    secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
+    secure: "boXPmbtKMUX5e9i5cSQqEzPKxfxZnX2232IFkoiLcRdwdopc92TeaS5gcpeA3XAWdsGoy8NOU1XTBCiTDQw94ehuA6ERTTKm/pLkqDyg5DeEvIM0ZQkB1BagGZnj2XzwSm0GeaeIdf6Qr931eDNDXBGItbeiee1rF8S2+OEHVfM="
+    # old secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
   local_dir: $TRAVIS_BUILD_DIR/package
   on:
-    branch:
-    - master
+    branch: master
