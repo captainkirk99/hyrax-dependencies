@@ -72,8 +72,8 @@ jobs:
     - docker run --env BUILD_STARE=yes --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
   - stage: travis
-      script:
-      - export DEPS_BUILD=travis
+    script:
+    - export DEPS_BUILD=travis
 
 # before_deploy will be run once for every job stage/script that completes
 before_deploy:
