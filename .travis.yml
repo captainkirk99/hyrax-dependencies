@@ -39,7 +39,11 @@ before_install: skip
 
 stages:
   - name: build
+    if:  branch = master
   - name: package
+    if:  branch = master
+  - name: travis
+    if:  branch = travis
 
 jobs:
   include:
@@ -67,7 +71,9 @@ jobs:
     # The Makefile checks the value of the env var $BUILD_STARE. jhrg 10/28/19
     - docker run --env BUILD_STARE=yes --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
-    
+  - stage: travis
+      - export DEPS_BUILD=travis
+
 # before_deploy will be run once for every job stage/script that completes
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
@@ -75,15 +81,17 @@ before_deploy:
 - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "travis"; then cp $TRAVIS_BUILD_DIR/README $TRAVIS_BUILD_DIR/package/README; fi
 
 deploy:
   provider: s3
   access_key_id: AKIA24JBYMSHQSFWAUM2
   secret_access_key:
-    secure: "T+grnrX6wOsBluSWWzUnPDTwn6/sPOgqhypTKcsCmHDLhWyhWpSgNZZHnBItd0My88VEVXPvfUhiXLKtl3Yi+HkGz3IMzeALj6OyBbQIZKxJDzy0vAPHiWHT0wHHVjLn5lNNTGxlex1sHNlCHeObRE7fjuCH50VEehvsfh1mpn4="
+    secure: "UlEtUtl2oWWPbp3Ef6MZI8WXKefsZiil3ElhibFcM/ephhxcIrQFlsSH4sLgJxEc9HhZ2IEuzRkgzmd0WOVYQyPvBZc/ReQtAsCiLwSBHZFxmqtNdB81XtSUwdSXBgG/knKeNjBdEXXT707+Q/W4+k7dDL28azjW93LS0iAxqC4="
     # old secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
   local_dir: $TRAVIS_BUILD_DIR/package
   on:
-    branch: master
+    # Change to travis for testing; master for ops
+    branch: travis
