@@ -87,7 +87,7 @@ deploy:
   provider: s3
   access_key_id: AKIA24JBYMSHQSFWAUM2
   secret_access_key:
-    secure: "UlEtUtl2oWWPbp3Ef6MZI8WXKefsZiil3ElhibFcM/ephhxcIrQFlsSH4sLgJxEc9HhZ2IEuzRkgzmd0WOVYQyPvBZc/ReQtAsCiLwSBHZFxmqtNdB81XtSUwdSXBgG/knKeNjBdEXXT707+Q/W4+k7dDL28azjW93LS0iAxqC4="
+    secure: "IKbqv9atNq2OY99IA0rWeRs00jaZuCiuRvSOtq6YDYQpS6y39vB59C9Ff2sfhRfCXd57mlL6JqWZTvFUNBzsj/YlgcEHsq00L85DUo+CFMHq7G9r3qSTx8HZAZhzMyVqza2XwFuuUL75wN7x+MmKIrYMY8diJX6/+3QvPYM3Bxw="
     # old secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
