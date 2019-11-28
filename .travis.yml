@@ -78,11 +78,10 @@ jobs:
 # before_deploy will be run once for every job stage/script that completes
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
-- if test "x$DEPS_BUILD" = "xtravis"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
-- if test "x$DEPS_BUILD" = "travis"; then cp $TRAVIS_BUILD_DIR/README $TRAVIS_BUILD_DIR/package/README; fi
+- if test "x$DEPS_BUILD" = "xtravis"; then cp $TRAVIS_BUILD_DIR/README $TRAVIS_BUILD_DIR/package/README; fi
 
 deploy:
   provider: s3
