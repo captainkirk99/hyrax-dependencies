@@ -71,7 +71,10 @@ jobs:
     # The Makefile checks the value of the env var $BUILD_STARE. jhrg 10/28/19
     - docker run --env BUILD_STARE=yes --volume $HOME/centos7/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
              opendap/centos7_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
-    
+  - stage: travis
+    script:
+    - export DEPS_BUILD=travis
+
 # before_deploy will be run once for every job stage/script that completes
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
@@ -80,15 +83,16 @@ before_deploy:
 - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xtravis"; then cp $TRAVIS_BUILD_DIR/README $TRAVIS_BUILD_DIR/package/README; fi
 
 deploy:
   provider: s3
   access_key_id: AKIA24JBYMSHQSFWAUM2
   secret_access_key:
     secure: "LzLLi/27ZX07eBplvxWqCFkTpL7xZ2zuY2c0+43ZO11xEIcs6iPEY1JgF+oFwC8EykBgHrab6RlyXRQ0GU3zE27CJrXVCg4gmIXcq45nZsGZP9/wIClfu2xe7OQPznehhg58WrlOl8Li4vvFu74ltu8wbB7kymPB1fu072oQC8A="
-    # old secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
   local_dir: $TRAVIS_BUILD_DIR/package
   on:
-    branch: master
+    # Change to travis for testing; master for ops
+    branch: travis
