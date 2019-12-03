@@ -38,13 +38,15 @@ env:
 stages:
   - name: travis
   - name: build
+    if: branch = master
   - name: package
+    if: branch = master
 
 jobs:
   include:
-    - stage: travis
-      script:
-        - export DEPS_BUILD=travis
+  - stage: travis
+    script:
+    - export DEPS_BUILD=travis
   - stage: build
     script:
     - export DEPS_BUILD=binary
