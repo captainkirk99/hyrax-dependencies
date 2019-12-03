@@ -35,17 +35,19 @@ env:
   global:
   - prefix=$HOME/install
 
-before_install: skip
-
 stages:
+  - name: travis
   - name: build
   - name: package
 
 jobs:
   include:
+    - stage: travis
+      script:
+        - export DEPS_BUILD=travis
   - stage: build
     script:
-    - export DEPS_BUILD=travis
+    - export DEPS_BUILD=binary
     - make -j7 for-travis BUILD_STARE=yes
   - stage: package
     script:
@@ -71,7 +73,8 @@ jobs:
 # before_deploy will be run once for every job stage/script that completes
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
-- if test "x$DEPS_BUILD" = "xtravis"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
+- if test "x$DEPS_BUILD" = "xtravis"; then cp $HOME/README $TRAVIS_BUILD_DIR/package; fi
+- if test "x$DEPS_BUILD" = "xbinary"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
@@ -80,7 +83,7 @@ deploy:
   provider: s3
   access_key_id: AKIA24JBYMSHQSFWAUM2
   secret_access_key:
-    secure: "ar2Cncbiy2VnPcNlhlnjwRXBzDSAhB9PW8LA6dauuZKGhAWTDe7EdK7DYE4uhvB2CUG6RabAVrvYEUdp5gAcCoAZPKPqPD8cUIpwhtsZUj3XnOZYtL/A3LKJbku17IIUq7GkiFFd1HfDVe1Dgo0270pv0/B4nY3kqjyI3pXStxc="
+    secure: "LzLLi/27ZX07eBplvxWqCFkTpL7xZ2zuY2c0+43ZO11xEIcs6iPEY1JgF+oFwC8EykBgHrab6RlyXRQ0GU3zE27CJrXVCg4gmIXcq45nZsGZP9/wIClfu2xe7OQPznehhg58WrlOl8Li4vvFu74ltu8wbB7kymPB1fu072oQC8A="
     # old secure: WJD2mU3sHhDU79plgjcYsAbMiHJ4Nld37H3ha1ODifRwbKNUnMYKRfXOs4EgwxNnvG1mjood/MgDJRB4Aip760ELA8MuXHQOiPtBWUTztj540QXbYbkslmI3Wa6KON6Uq+l9EZ4/RLFpQjSrN2oZ0+ZsuMEvFNfszeI6txbnbjU=
   bucket: opendap.travis.build
   skip_cleanup: true
