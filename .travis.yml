@@ -41,6 +41,7 @@ env:
 
 stages:
   - name: travis
+    if: branch = travis
   - name: build
     if: branch = master
   - name: package
