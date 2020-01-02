@@ -133,7 +133,7 @@ gdal2_dist=$(gdal2).tar.xz
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
 
-hdf4=hdf-4.2.10
+hdf4=hdf-4.2.14
 hdf4_dist=$(hdf4).tar.gz
 
 hdfeos=hdfeos
