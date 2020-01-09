@@ -133,7 +133,7 @@ gdal2_dist=$(gdal2).tar.xz
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
 
-hdf4=hdf-4.2.10
+hdf4=hdf-4.2.14
 hdf4_dist=$(hdf4).tar.gz
 
 hdfeos=hdfeos
@@ -149,7 +149,7 @@ hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 hdf5=hdf5-1.10.5
 hdf5_dist=$(hdf5).tar.bz2
 
-netcdf4=netcdf-c-4.4.1.1
+netcdf4=netcdf-c-4.7.3
 netcdf4_dist=$(netcdf4).tar.gz
 
 fits=cfitsio
@@ -158,7 +158,8 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE-0.6.4
+# stare=STARE-0.6.4
+stare=STARE-0.10.1
 stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
