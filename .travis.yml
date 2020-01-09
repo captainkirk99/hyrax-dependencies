@@ -95,4 +95,4 @@ deploy:
   local_dir: $TRAVIS_BUILD_DIR/package
   on:
     # Change to travis for testing; master for ops
-    branch: travis
+    branch: master
