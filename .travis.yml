@@ -34,10 +34,10 @@ addons:
 env:
   global:
   - prefix=$HOME/install
-  # AWS_SECRET_ACCESS_KEY=...
-  - secure: "W9Cr9E2XdbJ+wU6l7wJCgU0K09ES2KkHCJho5anjiuc28zahi3XA4LdD6C33wqRlwsbNHQzIqvNVAoLeSsJCkXRfCL3ppJ7dTUeE64365tHvT9mEeGLEbFRyTaJqDl04cpWxppqtilp1BMlES1KlOq3Eg7kq/dU+hI6OOIYExzI="
-  # AWS_ACCESS_KEY_ID=..
-  - secure: "eYPZOJVa+X4mNWpVKKJqtpyqhOFCDXbBN2YP0EYjs4AHf9JGc2cfKMTgGKJ3kQ7nCgs0vGpq/pAdq7G4GMIu6WqHmgO/6I+nH4N7mjDEdRB3c5EUwPb9DTnKRHrPz28HSnUelZIVsmHJ1uhA8qssqKM7jPuzUntoqUkDrwRTo3k="
+  # AWS_ACCESS_KEY_ID (user: travis-hyrax-dependencie)
+  - secure: "KDHpyQLB4nARPv/k4wUjgl6OD3jLMRifRwX58YFESvbU4IGB1pKS6sV0h4p5grdBBLikLYF7S61a2HhZ3b0zYADWzNEsDNwS3HDlhqVGVv53uanUy+6yTR7igkclh8zqw1dxzM9rbHtxB9TPIhq+gI0KpXXfMf+eP26SEuaiAWs="
+  # AWS_SECRET_ACCESS_KEY 
+  - secure: "hEaItJDLc8Qrq6U2eZBVjpZKRDsCe2wSBjGA46mPkHsmeKFjP/1lG5qZ2+DdmC3+2/ZgM4iIRpTE6cqTaIjrd+6E6b8Dkgxwu1aQlEJRkuxbOJqyHrgjCob23Xq5ieXa+rS7TlDIdnYJnS8uCWWCr+cuZw8cMVUaqu1uNLY0EZQ="
 
 stages:
   - name: travis
