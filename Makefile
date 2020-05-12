@@ -15,7 +15,7 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.22
+VERSION = 1.23
 
 # If $(BUILD_STARE) is not empty/undefined, build the library. This is a
 # work-around for issues with the STARE library and CentOS 6, which does not
