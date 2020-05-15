@@ -23,6 +23,7 @@ VERSION = 1.23
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
 # We don't build the library for CentOS6 (no C++11 on C6) or debian. jhrg 5/15/20
+
 ifeq ("$(BUILD_STARE)", "no")
 STARE =
 else
