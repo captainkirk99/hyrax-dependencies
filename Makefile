@@ -20,10 +20,13 @@ VERSION = 1.23
 # If $(BUILD_STARE) is not empty/undefined, build the library. This is a
 # work-around for issues with the STARE library and CentOS 6, which does not
 # support the C++-11 standard by default. jhrg 10/28/19
-ifneq ($(BUILD_STARE),)
-STARE=stare
+# Changed the sense of the BUILD_STARE env var so that if it's undefined,
+# the library is built. Setting it to 'no' suppresses the library build.
+# We don't build the library for CentOS6 (no C++11 on C6) or debian. jhrg 5/15/20
+ifeq ($(BUILD_STARE), "no")
+STARE =
 else
-STARE=
+STARE = stare
 endif
 
 .PHONY: $(deps)
