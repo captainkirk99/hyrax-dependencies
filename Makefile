@@ -17,6 +17,9 @@
 
 VERSION = 1.23
 
+# If $(BUILD_STARE) is not empty/undefined, build the library. This is a
+# work-around for issues with the STARE library and CentOS 6, which does not
+# support the C++-11 standard by default. jhrg 10/28/19
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
 # We don't build the library for CentOS6 (no C++11 on C6) or debian. jhrg 5/15/20
@@ -138,8 +141,7 @@ hdf4=hdf-4.2.14
 hdf4_dist=$(hdf4).tar.gz
 
 hdfeos=hdfeos
-# hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
-hdfeos_dist=HDF-EOS2.20v1.00.tar.Z
+hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 
 # hdf5=hdf5-1.8.17-chunks
 # hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
@@ -161,9 +163,8 @@ icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
 # stare=STARE-0.6.4
-# stare=STARE-0.14.1
-stare=STARE-0.16.2-beta
-stare_dist=$(stare).tar.gz
+stare=STARE-0.14.1
+stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
 src = src
