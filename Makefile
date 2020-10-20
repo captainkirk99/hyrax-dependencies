@@ -656,7 +656,7 @@ stare_prefix=$(prefix)/deps
 
 #STARE
 $(src)/$(stare)-stamp:
-	tar -xjf downloads/$(stare_dist) -C $(src)
+	tar -xzf downloads/$(stare_dist) -C $(src)
 	echo timestamp > $(src)/$(stare)-stamp
 
 stare-configure-stamp: $(src)/$(stare)-stamp
