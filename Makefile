@@ -99,18 +99,15 @@ check:
 # The names of the source code distribution files and and the dirs
 # they unpack to.
 
-# cmake=cmake-2.8.12.2
 cmake=cmake-3.11.3
 cmake_dist=$(cmake).tar.gz
 
-# bison=bison-3.0.4-osx-patch
 bison=bison-3.3
 bison_dist=$(bison).tar.xz
 
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-# Old version: openjpeg=openjpeg-2.0.0
 openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
@@ -119,13 +116,6 @@ openjpeg_dist=$(openjpeg).tar.gz
 proj=proj-6.0.0
 proj_dist=$(proj).tar.gz
 
-# The old version... jhrg 4/5/16
-# if we drop back to a 1.x version of gdal, then we should go for
-# 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
-# gdal=gdal-1.10.0
-# gdal_dist=$(gdal).tar.gz
-
-# The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
 # gdal2=gdal-2.3.3
 # gdal2=gdal-2.4.0
@@ -138,15 +128,8 @@ hdf4=hdf-4.2.14
 hdf4_dist=$(hdf4).tar.gz
 
 hdfeos=hdfeos
-# hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
-hdfeos_dist=HDF-EOS2.20v1.00.tar.Z
-
-# hdf5=hdf5-1.8.17-chunks
-# hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
-
-# hdf5=hdf5-1.8.16
-# hdf5=hdf5-1.8.20
-# hdf5_dist=$(hdf5).tar.bz2
+hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
+# hdfeos_dist=HDF-EOS2.20v1.00.tar.Z
 
 hdf5=hdf5-1.10.5
 hdf5_dist=$(hdf5).tar.bz2
@@ -160,8 +143,6 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-# stare=STARE-0.6.4
-# stare=STARE-0.14.1
 stare=STARE-0.16.2-beta
 stare_dist=$(stare).tar.gz
 
