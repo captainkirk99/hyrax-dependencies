@@ -1,4 +1,3 @@
-
 # Handwritten Makefile for the hyrax dependencies. Each dependency must be
 # configured, compiled and installed. Some support testing. Some do
 # not support parallel builds, with 'install' being particularly
@@ -108,7 +107,7 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.1.1
+openjpeg=openjpeg-2.3.1
 openjpeg_dist=$(openjpeg).tar.gz
 
 # This is a new and (4/2019) experimental API. Don't build it by
