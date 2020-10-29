@@ -2,10 +2,6 @@
 
 name: CI
 
-defaults:
-  env:
-    prefix: $GITHUB_WORKSPACE/build
-
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
@@ -16,6 +12,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  env:
+    prefix: $GITHUB_WORKSPACE/build:
+     
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
