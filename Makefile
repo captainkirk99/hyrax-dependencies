@@ -27,7 +27,9 @@ STARE = stare
 endif
 
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu $(STARE)
+deps = cmake bison jpeg gdal3 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
+
+# openjpeg gdal2 icu
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -119,6 +121,9 @@ gdal2=gdal-2.1.1
 # gdal2=gdal-2.3.3
 # gdal2=gdal-2.4.0
 gdal2_dist=$(gdal2).tar.xz
+
+gdal3=gdal-3.1.3
+gdal3_dist=$(gdal3).tar.gz
 
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
@@ -383,6 +388,40 @@ gdal2-really-clean: gdal2-clean
 
 .PHONY: gdal2
 gdal2: gdal2-install-stamp
+
+# GDAL3
+gdal3_src=$(src)/$(gdal3)
+gdal3_prefix=$(prefix)/deps
+
+$(gdal3_src)-stamp:
+	tar -xzf downloads/$(gdal3_dist) -C $(src)
+	echo timestamp > $(gdal3_src)-stamp
+
+gdal3-configure-stamp:  $(gdal3_src)-stamp
+	(cd $(gdal3_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
+	--prefix=$(gdal3_prefix) --without-python)
+	# --with-openjpeg=$(openjpeg_prefix))
+	echo timestamp > gdal3-configure-stamp
+
+gdal3-compile-stamp: gdal3-configure-stamp
+	(cd $(gdal3_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > gdal3-compile-stamp
+
+# Force -j1 for install
+gdal3-install-stamp: gdal3-compile-stamp
+	(cd $(gdal3_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > gdal3-install-stamp
+
+gdal3-clean:
+	-rm gdal3-*-stamp
+	-(cd  $(gdal3_src) && $(MAKE) $(MFLAGS) clean)
+
+gdal3-really-clean: gdal3-clean
+	-rm $(gdal3_src)-stamp
+	-rm -rf $(gdal3_src)
+
+.PHONY: gdal3
+gdal3: gdal3-install-stamp
 
 # Gridfields 
 gridfields_src=$(src)/$(gridfields)
