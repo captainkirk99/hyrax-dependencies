@@ -18,18 +18,21 @@ VERSION = 1.24
 
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
-# We don't build the library for CentOS6 (no C++11 on C6) or debian. jhrg 5/15/20
-
+# We don't build the library for CentOS6 (no C++11 on C6) or debian.
+# jhrg 5/15/20
+#
+# No longer needed - we require c++-11 for all the builds now that
+# CentOS 6 support has ended. jhrg 10/30/20
 ifeq ("$(BUILD_STARE)", "no")
 STARE =
 else
 STARE = stare
 endif
 
+# I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
-deps = cmake bison jpeg gdal3 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
-
-# openjpeg gdal2 icu
+deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
+proj gdal3 icu stare
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -40,14 +43,16 @@ deps = cmake bison jpeg gdal3 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
 # Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
+all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
+netcdf4 fits proj gdal3 stare
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
+travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
+fits proj gdal3 stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -113,13 +118,15 @@ openjpeg=openjpeg-2.3.1
 openjpeg_dist=$(openjpeg).tar.gz
 
 # This is a new and (4/2019) experimental API. Don't build it by
-# default. It will break the HDFEOS code in the hdf4 handler. jhrg 4/24/2019
-proj=proj-6.0.0
+# default. It will break the HDFEOS code in the hdf4 handler. jhrg
+# 4/24/2019
+#
+# Needed by GDAL3, build and install in a special directory under
+# $prefix and use it only with gdal3. jhrg 10/30/20
+proj=proj-6.3.2
 proj_dist=$(proj).tar.gz
 
 gdal2=gdal-2.1.1
-# gdal2=gdal-2.3.3
-# gdal2=gdal-2.4.0
 gdal2_dist=$(gdal2).tar.xz
 
 gdal3=gdal-3.1.3
@@ -292,9 +299,13 @@ openjpeg-really-clean: openjpeg-clean
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
 
-# proj4
+# proj6 Make a special directory for this since HDFEOS also installs
+# a 'proj.h' header and the hdf4 handler needs to find it. In the
+# future, invert this, making HDFEOS use the special install. The
+# hdf4 handler will have to be modifed to use a special set of de-
+# pendencies. jhrg 10/29/20
 proj_src=$(src)/$(proj)
-proj_prefix=$(prefix)/deps
+proj_prefix=$(prefix)/deps/proj-6
 
 $(proj_src)-stamp:
 	tar -xzf downloads/$(proj_dist) -C $(src)
@@ -398,10 +409,11 @@ $(gdal3_src)-stamp:
 	echo timestamp > $(gdal3_src)-stamp
 
 gdal3-configure-stamp:  $(gdal3_src)-stamp
-	(cd $(gdal3_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
-	--prefix=$(gdal3_prefix) --without-python)
-	# --with-openjpeg=$(openjpeg_prefix))
+	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) ./configure $(CONFIGURE_FLAGS) \
+	--prefix=$(gdal3_prefix) --with-pic --with-proj=$(proj_prefix) --without-python)
 	echo timestamp > gdal3-configure-stamp
+
+# --with-openjpeg=$(openjpeg_prefix))
 
 gdal3-compile-stamp: gdal3-configure-stamp
 	(cd $(gdal3_src) && $(MAKE) $(MFLAGS))
