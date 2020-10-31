@@ -9,7 +9,7 @@
 # build since C++-11 is not part of C6 by default. We're leaving STARE out of the Debian
 # package build for now as well. jhrg 10/28/19
 
-dist: trusty
+dist: xenial
 
 sudo: false
 
