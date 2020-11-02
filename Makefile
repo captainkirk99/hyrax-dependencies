@@ -409,8 +409,11 @@ $(gdal3_src)-stamp:
 	echo timestamp > $(gdal3_src)-stamp
 
 gdal3-configure-stamp:  $(gdal3_src)-stamp
-	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) ./configure $(CONFIGURE_FLAGS) \
-	--prefix=$(gdal3_prefix) --with-pic --with-proj=$(proj_prefix) --without-python)
+	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) \
+	CPPFLAGS="-I$(proj_prefix)/include $(CPPFLAGS)" \
+	LDFLAGS="-L$(proj_prefix)/lib $(LDFLAGS)" \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal3_prefix) \
+	--with-pic --with-proj=$(proj_prefix) --without-python)
 	echo timestamp > gdal3-configure-stamp
 
 # --with-openjpeg=$(openjpeg_prefix))
