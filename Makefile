@@ -1,4 +1,3 @@
-
 # Handwritten Makefile for the hyrax dependencies. Each dependency must be
 # configured, compiled and installed. Some support testing. Some do
 # not support parallel builds, with 'install' being particularly
@@ -15,23 +14,25 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.23
+VERSION = 1.24
 
-# If $(BUILD_STARE) is not empty/undefined, build the library. This is a
-# work-around for issues with the STARE library and CentOS 6, which does not
-# support the C++-11 standard by default. jhrg 10/28/19
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
-# We don't build the library for CentOS6 (no C++11 on C6) or debian. jhrg 5/15/20
-
+# We don't build the library for CentOS6 (no C++11 on C6) or debian.
+# jhrg 5/15/20
+#
+# No longer needed - we require c++-11 for all the builds now that
+# CentOS 6 support has ended. jhrg 10/30/20
 ifeq ("$(BUILD_STARE)", "no")
 STARE =
 else
 STARE = stare
 endif
 
+# I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
-deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits icu $(STARE)
+deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
+proj gdal3 icu stare
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -42,14 +43,16 @@ deps = cmake bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits 
 # Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
+all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
+netcdf4 fits proj gdal3 stare
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gdal2 gridfields hdf4 hdfeos hdf5 netcdf4 fits $(STARE)
+travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
+fits proj gdal3 stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -102,37 +105,32 @@ check:
 # The names of the source code distribution files and and the dirs
 # they unpack to.
 
-# cmake=cmake-2.8.12.2
 cmake=cmake-3.11.3
 cmake_dist=$(cmake).tar.gz
 
-# bison=bison-3.0.4-osx-patch
 bison=bison-3.3
 bison_dist=$(bison).tar.xz
 
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-# Old version: openjpeg=openjpeg-2.0.0
-openjpeg=openjpeg-2.1.1
+openjpeg=openjpeg-2.3.1
 openjpeg_dist=$(openjpeg).tar.gz
 
 # This is a new and (4/2019) experimental API. Don't build it by
-# default. It will break the HDFEOS code in the hdf4 handler. jhrg 4/24/2019
-proj=proj-6.0.0
+# default. It will break the HDFEOS code in the hdf4 handler. jhrg
+# 4/24/2019
+#
+# Needed by GDAL3, build and install in a special directory under
+# $prefix and use it only with gdal3. jhrg 10/30/20
+proj=proj-6.3.2
 proj_dist=$(proj).tar.gz
 
-# The old version... jhrg 4/5/16
-# if we drop back to a 1.x version of gdal, then we should go for
-# 1.11.4 which is available on CentOS 7.1. jhrg 8/24/16
-# gdal=gdal-1.10.0
-# gdal_dist=$(gdal).tar.gz
-
-# The new version. jhrg 8/24/16
 gdal2=gdal-2.1.1
-# gdal2=gdal-2.3.3
-# gdal2=gdal-2.4.0
 gdal2_dist=$(gdal2).tar.xz
+
+gdal3=gdal-3.1.3
+gdal3_dist=$(gdal3).tar.gz
 
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
@@ -142,13 +140,7 @@ hdf4_dist=$(hdf4).tar.gz
 
 hdfeos=hdfeos
 hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
-
-# hdf5=hdf5-1.8.17-chunks
-# hdf5_dist=hdf5-1.8.17-chunks.tar.bz2
-
-# hdf5=hdf5-1.8.16
-# hdf5=hdf5-1.8.20
-# hdf5_dist=$(hdf5).tar.bz2
+# hdfeos_dist=HDF-EOS2.20v1.00.tar.Z
 
 hdf5=hdf5-1.10.5
 hdf5_dist=$(hdf5).tar.bz2
@@ -162,9 +154,8 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-# stare=STARE-0.6.4
-stare=STARE-0.14.1
-stare_dist=$(stare).tar.bz2
+stare=STARE-0.16.2-beta
+stare_dist=$(stare).tar.gz
 
 # NB The environment variable $prefix is assumed to be set.
 src = src
@@ -308,9 +299,13 @@ openjpeg-really-clean: openjpeg-clean
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
 
-# proj4
+# proj6 Make a special directory for this since HDFEOS also installs
+# a 'proj.h' header and the hdf4 handler needs to find it. In the
+# future, invert this, making HDFEOS use the special install. The
+# hdf4 handler will have to be modifed to use a special set of de-
+# pendencies. jhrg 10/29/20
 proj_src=$(src)/$(proj)
-proj_prefix=$(prefix)/deps
+proj_prefix=$(prefix)/deps/proj-6
 
 $(proj_src)-stamp:
 	tar -xzf downloads/$(proj_dist) -C $(src)
@@ -404,6 +399,41 @@ gdal2-really-clean: gdal2-clean
 
 .PHONY: gdal2
 gdal2: gdal2-install-stamp
+
+# GDAL3
+gdal3_src=$(src)/$(gdal3)
+gdal3_prefix=$(prefix)/deps
+
+$(gdal3_src)-stamp:
+	tar -xzf downloads/$(gdal3_dist) -C $(src)
+	echo timestamp > $(gdal3_src)-stamp
+
+gdal3-configure-stamp:  $(gdal3_src)-stamp
+	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) ./configure $(CONFIGURE_FLAGS) \
+	--prefix=$(gdal3_prefix) --with-pic --with-proj=$(proj_prefix) --without-python)
+	echo timestamp > gdal3-configure-stamp
+
+# --with-openjpeg=$(openjpeg_prefix))
+
+gdal3-compile-stamp: gdal3-configure-stamp
+	(cd $(gdal3_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > gdal3-compile-stamp
+
+# Force -j1 for install
+gdal3-install-stamp: gdal3-compile-stamp
+	(cd $(gdal3_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > gdal3-install-stamp
+
+gdal3-clean:
+	-rm gdal3-*-stamp
+	-(cd  $(gdal3_src) && $(MAKE) $(MFLAGS) clean)
+
+gdal3-really-clean: gdal3-clean
+	-rm $(gdal3_src)-stamp
+	-rm -rf $(gdal3_src)
+
+.PHONY: gdal3
+gdal3: gdal3-install-stamp
 
 # Gridfields 
 gridfields_src=$(src)/$(gridfields)
@@ -657,7 +687,7 @@ stare_prefix=$(prefix)/deps
 
 #STARE
 $(src)/$(stare)-stamp:
-	tar -xjf downloads/$(stare_dist) -C $(src)
+	tar -xzf downloads/$(stare_dist) -C $(src)
 	echo timestamp > $(src)/$(stare)-stamp
 
 stare-configure-stamp: $(src)/$(stare)-stamp

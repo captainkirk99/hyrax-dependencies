@@ -12,7 +12,7 @@
 # I removed CentOS 6 from our packages (10/27/20) since it is going to stop having
 # maintenance releases in November 2020. jhrg
 
-dist: trusty
+dist: xenial
 
 sudo: false
 
