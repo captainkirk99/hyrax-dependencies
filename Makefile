@@ -32,7 +32,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-proj gdal3 icu stare
+gdal2 icu stare
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -376,9 +376,14 @@ $(gdal2_src)-stamp:
 	echo timestamp > $(gdal2_src)-stamp
 
 gdal2-configure-stamp:  $(gdal2_src)-stamp
-	(cd $(gdal2_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
-	--prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
+	(cd $(gdal2_src) && \
+	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" \
+    LDFLAGS="-L$(proj_prefix)/lib/openjpeg-2.3 $(LDFLAGS)" \
+    ./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+    --without-netcdf --prefix=$(gdal2_prefix))
 	echo timestamp > gdal2-configure-stamp
+
+#  --with-openjpeg=$(openjpeg_prefix))
 
 gdal2-compile-stamp: gdal2-configure-stamp
 	(cd $(gdal2_src) && $(MAKE) $(MFLAGS))
