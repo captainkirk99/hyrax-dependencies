@@ -114,7 +114,7 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.3.1
+openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
 # This is a new and (4/2019) experimental API. Don't build it by
@@ -377,13 +377,13 @@ $(gdal2_src)-stamp:
 
 gdal2-configure-stamp:  $(gdal2_src)-stamp
 	(cd $(gdal2_src) && \
-	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" \
-    LDFLAGS="-L$(proj_prefix)/lib/openjpeg-2.3 $(LDFLAGS)" \
-    ./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-    --without-netcdf --prefix=$(gdal2_prefix))
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+	--without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
 	echo timestamp > gdal2-configure-stamp
 
-#  --with-openjpeg=$(openjpeg_prefix))
+# 	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" 
+#	LDFLAGS="-L$(proj_prefix)/lib/openjpeg-2.3 $(LDFLAGS)" 
+#  	--with-openjpeg=$(openjpeg_prefix))
 
 gdal2-compile-stamp: gdal2-configure-stamp
 	(cd $(gdal2_src) && $(MAKE) $(MFLAGS))
