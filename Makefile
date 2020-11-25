@@ -55,7 +55,7 @@ travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
 fits gdal2 stare
 
 .PHONY: $(actions_test_build)
-actions_test_build = bisong jpeg openjpeg
+actions_test_build = bison jpeg openjpeg
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
