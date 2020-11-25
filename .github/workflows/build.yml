@@ -38,6 +38,7 @@ jobs:
 
       - run: ls	-lR
 
+  # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
   testbox:
     runs-on: ubuntu-latest
     container:
