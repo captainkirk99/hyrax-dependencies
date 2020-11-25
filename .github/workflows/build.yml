@@ -38,3 +38,14 @@ jobs:
 
       - run: ls	-lR
 
+  testbox:
+    runs-on: ubuntu-latest
+    container:
+      image: opendap/centos7_hyrax_builder:1.1
+      # azul/zulu-openjdk-alpine:8-jre
+    steps:
+      - uses: actions/checkout@v2
+      - name: What OS is running
+        run: uname -a
+      - name: What g++ version do we have
+        run: g++ --version
