@@ -54,6 +54,9 @@ netcdf4 fits gdal2 stare
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
 fits gdal2 stare
 
+.PHONY: $(actions_test_build)
+actions_test_build = bisong jpeg openjpeg
+
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
 
@@ -83,6 +86,9 @@ for-static-rpm: prefix-set
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
 	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
+
+for-actions: prefix-set
+	for d in $(actions_test_build); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
 
