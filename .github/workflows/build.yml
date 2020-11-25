@@ -29,13 +29,10 @@ jobs:
 
       - run: ls -lR
 
-  centos-build:
-    runs-on: centos-latest
+  osx-build:
+    runs-on: macos-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
       - name: make-for-actions
         run: make -j16 for-actions
 
