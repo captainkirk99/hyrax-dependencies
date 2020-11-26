@@ -56,8 +56,9 @@ jobs:
           pwd
           make -j8 for-actions
           ls -lR $prefix/deps
-          tar -czf /hyrax-deps-centos7.tar.gz $prefix/deps
+          tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
           path: /hyrax-deps-centos7.tar.gz
+          name: hyrax-deps-centos7.tar.gz
