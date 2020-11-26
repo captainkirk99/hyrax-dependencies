@@ -49,10 +49,15 @@ jobs:
       image: opendap/centos7_hyrax_builder:1.1
 
     steps:
-      - uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v2
       - name: build
         run: |
           pwd
           make -j8 for-actions
-          cd
           ls -lR $prefix/deps
+          tar -czf /hyrax-deps-centos7.tar.gz $prefix/deps
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: /hyrax-deps-centos7.tar.gz
