@@ -48,5 +48,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: What OS is running
         run: uname -a
-      - name: What g++ version do we have
-        run: g++ --version
+      - name: Where are we
+        run: pwd
+      - name: build in container
+        run: sh ./build-for-rpm.sh
