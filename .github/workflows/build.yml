@@ -49,6 +49,8 @@ jobs:
       # azul/zulu-openjdk-alpine:8-jre
     steps:
       - uses: actions/checkout@v2
-      - run: uname -a
-      - run: pwd
-      - run: ls -lR
+      - run: |
+          pwd
+          make -j8
+          cd
+          ls -lR
