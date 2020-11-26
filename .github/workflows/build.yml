@@ -46,9 +46,6 @@ jobs:
       # azul/zulu-openjdk-alpine:8-jre
     steps:
       - uses: actions/checkout@v2
-      - name: What OS is running
-        run: uname -a
-      - name: Where are we
-        run: pwd
-      - name: build in container
-        run: sh ./build-for-rpm.sh
+      - run: uname -a
+      - run: pwd
+      - run: ls -lR
