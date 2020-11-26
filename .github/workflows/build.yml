@@ -42,15 +42,17 @@ jobs:
       - run: ls	-lR
 
   # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
+  # and https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
   testbox:
     runs-on: ubuntu-latest
     container:
       image: opendap/centos7_hyrax_builder:1.1
-      # azul/zulu-openjdk-alpine:8-jre
+
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - name: build
+        run: |
           pwd
-          make -j8
+          make -j8 for-actions
           cd
-          ls -lR
+          ls -lR $prefix/deps
