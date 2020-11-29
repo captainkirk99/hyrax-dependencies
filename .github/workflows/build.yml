@@ -27,11 +27,11 @@ jobs:
       - name: make-for-actions
         run: make -j8 for-static-rpm
       - name: build ubuntu tar ball
-        run: tar -czf /hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
+        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: /hyrax-deps-ubuntu.tar.gz
+          path: $prefix/hyrax-deps-ubuntu.tar.gz
           name: hyrax-deps-ubuntu.tar.gz
 
   # Build on OSX just to check that changes work in our dev environments
