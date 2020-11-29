@@ -25,7 +25,7 @@ jobs:
 
       # Run commands using the runners shell
       - name: make-for-actions
-        run: make -j8 for-actions
+        run: make -j8 for-static-rpm
       - name: build ubuntu tar ball
         run: tar -czf /hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
       - name: upload artifact
@@ -57,7 +57,7 @@ jobs:
       - name: build
         run: |
           pwd
-          make -j8 for-actions
+          make -j8 for-static-rpm
           ls -lR $prefix/deps
           tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
       - name: upload artifact
