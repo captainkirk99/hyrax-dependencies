@@ -32,7 +32,7 @@ jobs:
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: $prefix/hyrax-deps-ubuntu.tar.gz
+          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
           name: hyrax-deps-ubuntu.tar.gz
 
   # Build on OSX just to check that changes work in our dev environments
