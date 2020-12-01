@@ -451,18 +451,14 @@ gdal4_src=$(src)/$(gdal4)
 gdal4_prefix=$(prefix)/deps
 
 $(gdal4_src)-stamp:
-	tar -xJf downloads/$(gdal2_dist) -C $(src)
+	tar -xJf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" \
-    LDFLAGS="-L$(proj_prefix)/lib/openjpeg-2.3 $(LDFLAGS)" \
-    ./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-    --without-netcdf --prefix=$(gdal4_prefix))
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
 	echo timestamp > gdal4-configure-stamp
-
-#  --with-openjpeg=$(openjpeg_prefix))
 
 gdal4-compile-stamp: gdal4-configure-stamp
 	(cd $(gdal4_src) && $(MAKE) $(MFLAGS))
