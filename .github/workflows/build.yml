@@ -9,7 +9,7 @@ env:
 # events but only for the master branch
 on:
   push:
-    branches: [ actions-test ]
+    branches: [ actions-test gdal-test314 ]
   pull_request:
     branches: [ actions-test ]
   workflow_dispatch:
@@ -19,7 +19,7 @@ on:
 
 jobs:
   ubuntu-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -29,7 +29,8 @@ jobs:
         run: make -j8 for-static-rpm
       - name: build ubuntu tar ball
         run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
-      - name: upload artifact
+      - name: upload to S3
+        run: aws s3 cp
         uses: actions/upload-artifact@v2
         with:
           path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
@@ -59,10 +60,16 @@ jobs:
         run: |
           pwd
           make -j8 for-static-rpm
-          ls -lR $prefix/deps
-          tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
+          mkdir -p $prefix/artifacts
+          ls -lR $prefix
+          tar -czf $prefix/artifacts/hyrax-deps-centos7.tar.gz -C $prefix/deps .
+      - name: synch to S3
+        uses: jakejarvis/s3-sync-action@master
         with:
-          path: /hyrax-deps-centos7.tar.gz
-          name: hyrax-deps-centos7.tar.gz
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_TRAVIS_HYRAX_DEPENDENCIES }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECREY_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
+          # AWS_REGION: 'us-west-1'               # optional: defaults to us-east-1
+          SOURCE_DIR: '$prefix/artifacts/'      # optional: defaults to entire repository
