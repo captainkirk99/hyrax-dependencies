@@ -1,0 +1,68 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+env:
+  prefix: ${{ github.workspace }}/build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ actions-test ]
+  pull_request:
+    branches: [ actions-test ]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run
+# sequentially or in parallel
+
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Run commands using the runners shell
+      - name: make-for-actions
+        run: make -j8 for-static-rpm
+      - name: build ubuntu tar ball
+        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
+          name: hyrax-deps-ubuntu.tar.gz
+
+  # Build on OSX just to check that changes work in our dev environments
+  osx-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: make-for-actions
+        run: make -j8 for-actions
+
+  # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
+  # and https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+  # This build uses Ubuntu link to run Docker and a CentOS7 container
+  # for the build. Note that commands run inside the container.
+  centos-7-build:
+    runs-on: ubuntu-latest
+    container:
+      image: opendap/centos7_hyrax_builder:1.1
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: |
+          pwd
+          make -j8 for-static-rpm
+          ls -lR $prefix/deps
+          tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: /hyrax-deps-centos7.tar.gz
+          name: hyrax-deps-centos7.tar.gz
