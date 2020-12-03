@@ -9,7 +9,7 @@ env:
 # events but only for the master branch
 on:
   push:
-    branches: [ actions-test gdal-test314 ]
+    branches: [ actions-test ]
   pull_request:
     branches: [ actions-test ]
   workflow_dispatch:
