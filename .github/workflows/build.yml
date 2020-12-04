@@ -1,0 +1,76 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+env:
+  prefix: ${{ github.workspace }}/build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ actions-test ]
+  pull_request:
+    branches: [ actions-test ]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run
+# sequentially or in parallel
+
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-16.04
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Run commands using the runner's shell
+      - name: make static libraries
+        run: make -j8 for-static-rpm
+#      - name: build ubuntu tar ball
+#        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
+#      - name: upload to S3
+#        uses: actions/upload-artifact@v2
+#        with:
+#          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
+#          name: hyrax-deps-ubuntu.tar.gz
+
+  # Build on OSX just to check that changes work in our dev environments
+  osx-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: make static libraries
+        run: make -j8 for-static-rpm
+
+  # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
+  # and https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+  # This build uses Ubuntu link to run Docker and a CentOS7 container
+  # for the build. Note that commands run inside the container.
+  centos-7-build:
+    runs-on: ubuntu-latest
+    container:
+      image: opendap/centos7_hyrax_builder:1.1
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build
+        run: |
+          pwd
+          make -j8 for-static-rpm
+          mkdir -p $SOURCE_DIR
+          ls -lR $prefix
+          tar -czf $SOURCE_DIR/hyrax-deps-centos7.tar.gz -C $prefix/deps .
+      - name: synch to S3
+        # run: aws s3 sync --follow-symlinks --delete $SOURCE_DIR s3://$AWS_S3_BUCKET
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks --delete
+          # --acl public-read
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_TRAVIS_HYRAX_DEPENDENCIES }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECREY_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
+          AWS_REGION: 'us-east-1'               # optional: defaults to us-east-1
+          SOURCE_DIR: '$prefix/artifacts/'      # optional: defaults to entire repository

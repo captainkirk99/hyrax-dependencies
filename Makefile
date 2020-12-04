@@ -32,7 +32,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-gdal2 icu stare
+gdal4 icu stare
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -44,7 +44,7 @@ gdal2 icu stare
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits gdal2 stare
+netcdf4 fits gdal4 stare
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -52,7 +52,11 @@ netcdf4 fits gdal2 stare
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits gdal2 stare
+fits gdal4 stare
+
+.PHONY: $(actions_build)
+actions_build = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
+netcdf4 fits gdal2 stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -83,6 +87,9 @@ for-static-rpm: prefix-set
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
 	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
+
+for-actions: prefix-set
+	for d in $(actions_build); do $(MAKE) $(MFLAGS) $$d; done
 
 clean: $(deps_clean)
 
@@ -132,6 +139,9 @@ gdal2_dist=$(gdal2).tar.xz
 gdal3=gdal-3.1.3
 gdal3_dist=$(gdal3).tar.gz
 
+gdal4=gdal-3.1.4
+gdal4_dist=$(gdal4).tar.gz
+
 gridfields=gridfields-1.0.5
 gridfields_dist=$(gridfields).tar.gz
 
@@ -148,8 +158,10 @@ hdf5_dist=$(hdf5).tar.bz2
 netcdf4=netcdf-c-4.7.3
 netcdf4_dist=$(netcdf4).tar.gz
 
-fits=cfitsio
-fits_dist=$(fits)3270.tar.gz
+#fits=cfitsio
+#fits_dist=$(fits)3270.tar.gz
+fits=cfitsio-3.49
+fits_dist=$(fits).tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
@@ -442,6 +454,40 @@ gdal3-really-clean: gdal3-clean
 
 .PHONY: gdal3
 gdal3: gdal3-install-stamp
+
+# GDAL4
+gdal4_src=$(src)/$(gdal4)
+gdal4_prefix=$(prefix)/deps
+
+$(gdal4_src)-stamp:
+	tar -xJf downloads/$(gdal4_dist) -C $(src)
+	echo timestamp > $(gdal4_src)-stamp
+
+gdal4-configure-stamp:  $(gdal4_src)-stamp
+	(cd $(gdal4_src) && \
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
+	echo timestamp > gdal4-configure-stamp
+
+gdal4-compile-stamp: gdal4-configure-stamp
+	(cd $(gdal4_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > gdal4-compile-stamp
+
+# Force -j1 for install
+gdal4-install-stamp: gdal4-compile-stamp
+	(cd $(gdal4_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > gdal4-install-stamp
+
+gdal4-clean:
+	-rm gdal4-*-stamp
+	-(cd  $(gdal4_src) && $(MAKE) $(MFLAGS) clean)
+
+gdal4-really-clean: gdal4-clean
+	-rm $(gdal4_src)-stamp
+	-rm -rf $(gdal4_src)
+
+.PHONY: gdal4
+gdal4: gdal4-install-stamp
 
 # Gridfields 
 gridfields_src=$(src)/$(gridfields)
