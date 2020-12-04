@@ -460,7 +460,7 @@ gdal4_src=$(src)/$(gdal4)
 gdal4_prefix=$(prefix)/deps
 
 $(gdal4_src)-stamp:
-	tar -xJf downloads/$(gdal4_dist) -C $(src)
+	tar -xzf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
 gdal4-configure-stamp:  $(gdal4_src)-stamp
