@@ -465,7 +465,7 @@ $(gdal4_src)-stamp:
 
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --with-proj=/usr/local \
 	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
