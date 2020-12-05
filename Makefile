@@ -32,7 +32,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-gdal4 icu stare
+proj gdal4 icu stare
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -44,7 +44,7 @@ gdal4 icu stare
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits gdal4 stare
+netcdf4 fits proj gdal4 stare
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -52,11 +52,11 @@ netcdf4 fits gdal4 stare
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits gdal4 stare
+fits proj gdal4 stare
 
 .PHONY: $(actions_build)
 actions_build = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits gdal2 stare
+netcdf4 fits proj gdal4 stare
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -289,7 +289,8 @@ $(openjpeg_src)-stamp:
 	echo timestamp > $(openjpeg_src)-stamp
 
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
-	(cd $(openjpeg_src) && cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
+	(cd $(openjpeg_src) \
+	 && cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -463,10 +464,14 @@ $(gdal4_src)-stamp:
 	tar -xzf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
+#	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --with-proj=/usr/local \
+#	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
+
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --with-proj=/usr/local \
-	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
+	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
+	--with-proj=$(proj_prefix) --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
