@@ -17,7 +17,8 @@
 VERSION = 1.25
 
 # If a site.mk file exists in the parent dir, include it. Use this
-# to add site-specific info let values for SQLITE3_LIBS and SQLITE3_CFLAGS.
+# to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
+# which are needed to build the proj library in some obscure cases. 
 # jhrg 12/5/20
 -include ../hyrax-deps-site.mk
 
