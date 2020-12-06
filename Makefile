@@ -16,6 +16,11 @@
 
 VERSION = 1.25
 
+# If a site.mk file exists in the parent dir, include it. Use this
+# to add site-specific info let values for SQLITE3_LIBS and SQLITE3_CFLAGS.
+# jhrg 12/5/20
+-include ../hyrax-deps-site.mk
+
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
 # We don't build the library for CentOS6 (no C++11 on C6) or debian.
@@ -325,7 +330,8 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && ./configure --prefix=$(proj_prefix) )
+	(cd $(proj_src) && SQLITE3_CFLAGS=$(SQLITE3_CFLAGS) SQLITE3_LIBS=$(SQLITE3_LIBS) \
+		./configure --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
