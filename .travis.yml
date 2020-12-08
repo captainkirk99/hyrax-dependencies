@@ -11,9 +11,10 @@
 #
 # I removed CentOS 6 from our packages (10/27/20) since it is going to stop having
 # maintenance releases in November 2020. jhrg
+#
+# I removed the Ubuntu/deb build because we're not using it. jhrg 12/08/20
 
 dist: xenial
-# focal
 
 sudo: false
 
@@ -24,7 +25,6 @@ compiler: gcc
 branches:
   only:
   - master
-  - travis
 
 addons:
   apt:
@@ -54,21 +54,7 @@ jobs:
     - export DEPS_BUILD=binary
     - make -j7 for-travis
 
-# - stage: package
-#   script:
-#   - export DEPS_BUILD=ubuntu14
-#   - mkdir -p $HOME/ubuntu14/install
-#   - docker run --env BUILD_STARE=no --volume $HOME/ubuntu14/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
-#             opendap/ubuntu14_hyrax_build:1.4 /root/hyrax-dependencies/build-for-deb.sh
-#   Removed jhrg 10/27/20
-#  - stage: package
-#    script:
-#    - export DEPS_BUILD=centos6
-#    - mkdir -p $HOME/centos6/install
-#    - docker run --env BUILD_STARE=no --volume $HOME/centos6/install:/root/install --volume $TRAVIS_BUILD_DIR:/root/hyrax-dependencies
-#             opendap/centos6_hyrax_builder:1.1 /root/hyrax-dependencies/build-for-rpm.sh
-
-- stage: build
+  - stage: build
     script: 
     - export DEPS_BUILD=centos7
     - mkdir -p $HOME/centos7/install
@@ -83,9 +69,6 @@ jobs:
 before_deploy:
 - mkdir -p $TRAVIS_BUILD_DIR/package
 - if test "x$DEPS_BUILD" = "xbinary"; then tar -C $HOME -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-build.tar.gz install; fi
-# - if test "x$DEPS_BUILD" = "xubuntu14"; then tar -C $HOME/ubuntu14/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-ubuntu14-static.tar.gz install; fi
-# Removed jhrg 10/27/20
-# - if test "x$DEPS_BUILD" = "xcentos6"; then tar -C $HOME/centos6/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos6-static.tar.gz install; fi
 - if test "x$DEPS_BUILD" = "xcentos7"; then tar -C $HOME/centos7/ -czvf $TRAVIS_BUILD_DIR/package/hyrax-dependencies-centos7-static.tar.gz install; fi
 
 deploy:
@@ -96,5 +79,4 @@ deploy:
   skip_cleanup: true
   local_dir: $TRAVIS_BUILD_DIR/package
   on:
-    # Change to travis for testing; master for ops
     branch: master
