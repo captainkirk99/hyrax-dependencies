@@ -22,6 +22,8 @@ VERSION = 1.25
 # jhrg 12/5/20
 -include ../hyrax-deps-site.mk
 
+CONFIGURE_FLAGS = --disable-dependency-tracking --enable-silent-rules
+
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
 # We don't build the library for CentOS6 (no C++11 on C6) or debian.
@@ -88,7 +90,7 @@ prefix-set:
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
 	for d in $(all_static_deps); \
-		do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
+		do CONFIGURE_FLAGS="$(CONFIGURE_FLAGS) --disable-shared" $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
@@ -332,7 +334,7 @@ $(proj_src)-stamp:
 
 proj-configure-stamp:  $(proj_src)-stamp
 	(cd $(proj_src) && SQLITE3_CFLAGS=$(SQLITE3_CFLAGS) SQLITE3_LIBS=$(SQLITE3_LIBS) \
-		./configure --prefix=$(proj_prefix) )
+	./configure --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -476,8 +478,9 @@ $(gdal4_src)-stamp:
 
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
+	./configure $(CONFIGURE_FLAGS) --disable-all-optional-drivers \
+	--with-pic --without-python --without-netcdf \
+	--prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
 	--with-proj=$(proj_prefix) --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
