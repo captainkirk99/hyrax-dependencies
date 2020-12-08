@@ -141,6 +141,9 @@ jpeg_dist=jpegsrc.v6b.tar.gz
 openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
+sqlite3=sqlite-autoconf-3340000
+sqlite3_dist=$(sqlite3).tar.gz
+
 # This is a new and (4/2019) experimental API. Don't build it by
 # default. It will break the HDFEOS code in the hdf4 handler. jhrg
 # 4/24/2019
@@ -342,7 +345,7 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS=$(SQLITE3_CFLAGS) SQLITE3_LIBS=$(SQLITE3_LIBS) \
+	(cd $(proj_src) && SQLITE3_CFLAGS="$(SQLITE3_CFLAGS)" SQLITE3_LIBS="$(SQLITE3_LIBS)" \
 	./configure --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
@@ -490,7 +493,7 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	./configure $(CONFIGURE_FLAGS) --disable-all-optional-drivers \
 	--with-pic --without-python --without-netcdf \
 	--prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-	--with-proj=$(proj_prefix) --without-pg)
+	--with-proj=$(proj_prefix) --without-sqlite3 --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
