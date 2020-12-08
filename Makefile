@@ -22,6 +22,7 @@ VERSION = 1.25
 # jhrg 12/5/20
 -include ../hyrax-deps-site.mk
 
+# These options speed up the builds jhrg 12/08/20
 CONFIGURE_FLAGS = --disable-dependency-tracking --enable-silent-rules
 
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
@@ -40,7 +41,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-proj gdal4 icu stare
+proj gdal4 icu stare list-built
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -52,7 +53,7 @@ proj gdal4 icu stare
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits proj gdal4 stare
+netcdf4 fits proj gdal4 stare list-built
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -60,11 +61,12 @@ netcdf4 fits proj gdal4 stare
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits proj gdal4 stare
+fits proj gdal4 stare list-built
 
+# actions_build is used for testing. So named because of the new GitHub
+# Actions workflow. jhrg 12/08/20
 .PHONY: $(actions_build)
-actions_build = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits proj gdal4 stare
+actions_build = bison jpeg openjpeg list-built
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -76,6 +78,13 @@ all: prefix-set
 prefix-set:
 	@if test -z "$$prefix"; then \
 	echo "The env variable 'prefix' must be set. See README"; exit 1; fi
+
+.PHONY: list-built
+list-built:
+	@echo
+	@echo "*** Packages built and installed ***"
+	@ls -1 *-install-stamp
+	@echo "*** ---------------------------- ***"
 
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
