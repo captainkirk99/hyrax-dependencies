@@ -41,7 +41,9 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-sqlite3 proj gdal4 icu stare list-built
+gdal2 icu stare list-built
+
+# sqlite3 proj gdal4
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -53,7 +55,9 @@ sqlite3 proj gdal4 icu stare list-built
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits sqlite3 proj gdal4 stare list-built
+netcdf4 fits gdal2 stare list-built
+
+# sqlite3 proj gdal4
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -61,7 +65,9 @@ netcdf4 fits sqlite3 proj gdal4 stare list-built
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits sqlite3 proj gdal4 stare list-built
+fits gdal2 stare list-built
+
+# sqlite3 proj gdal4
 
 # actions_build is used for testing. So named because of the new GitHub
 # Actions workflow. jhrg 12/08/20
