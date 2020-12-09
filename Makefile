@@ -184,10 +184,10 @@ hdf5_dist=$(hdf5).tar.bz2
 netcdf4=netcdf-c-4.7.3
 netcdf4_dist=$(netcdf4).tar.gz
 
-#fits=cfitsio
-#fits_dist=$(fits)3270.tar.gz
-fits=cfitsio-3.49
-fits_dist=$(fits).tar.gz
+fits=cfitsio
+fits_dist=$(fits)3270.tar.gz
+#fits=cfitsio-3.49
+#fits_dist=$(fits).tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
