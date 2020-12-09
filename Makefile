@@ -41,7 +41,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-proj gdal4 icu stare list-built
+sqlite3 proj gdal4 icu stare list-built
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -53,7 +53,7 @@ proj gdal4 icu stare list-built
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits proj gdal4 stare list-built
+netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -61,12 +61,12 @@ netcdf4 fits proj gdal4 stare list-built
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits proj gdal4 stare list-built
+fits sqlite3 proj gdal4 stare list-built
 
 # actions_build is used for testing. So named because of the new GitHub
 # Actions workflow. jhrg 12/08/20
 .PHONY: $(actions_build)
-actions_build = bison jpeg openjpeg list-built
+actions_build = bison sqlite3 proj gdal4 list-built
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -332,6 +332,36 @@ openjpeg-really-clean: openjpeg-clean
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
 
+sqlite3_src=$(src)/$(sqlite3)
+sqlite3_prefix=$(prefix)/deps
+
+$(sqlite3_src)-stamp:
+	tar -xzf downloads/$(sqlite3_dist) -C $(src)
+	echo timestamp > $(sqlite3_src)-stamp
+
+sqlite3-configure-stamp:  $(sqlite3_src)-stamp
+	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(sqlite3_prefix) )
+	echo timestamp > sqlite3-configure-stamp
+
+sqlite3-compile-stamp: sqlite3-configure-stamp
+	(cd $(sqlite3_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > sqlite3-compile-stamp
+
+sqlite3-install-stamp: sqlite3-compile-stamp
+	(cd $(sqlite3_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > sqlite3-install-stamp
+
+sqlite3-clean:
+	-rm sqlite3-*-stamp
+	-(cd  $(sqlite3_src) && $(MAKE) $(MFLAGS) uninstall clean)
+
+sqlite3-really-clean: sqlite3-clean
+	-rm $(src)/sqlite3-*-stamp	
+	-rm -rf $(sqlite3_src)
+
+.PHONY: sqlite3
+sqlite3: sqlite3-install-stamp
+
 # proj6 Make a special directory for this since HDFEOS also installs
 # a 'proj.h' header and the hdf4 handler needs to find it. In the
 # future, invert this, making HDFEOS use the special install. The
@@ -345,8 +375,8 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS="$(SQLITE3_CFLAGS)" SQLITE3_LIBS="$(SQLITE3_LIBS)" \
-	./configure --prefix=$(proj_prefix) )
+	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -485,15 +515,12 @@ $(gdal4_src)-stamp:
 	tar -xzf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
-#	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --with-proj=/usr/local \
-#	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
-
+# I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --disable-all-optional-drivers \
-	--with-pic --without-python --without-netcdf \
-	--prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-	--with-proj=$(proj_prefix) --without-sqlite3 --without-pg)
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
+    --with-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
+    --without-netcdf --without-sqlite3 --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
