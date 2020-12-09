@@ -20,13 +20,16 @@
 #
 # Use an official CentOS6 or 7 runtime as a parent image (centos:centos6
 # or centos:centos7)
-FROM centos:centos6
+#
+# We no longer support CentOS 6.
+
+FROM centos:centos7
 
 # Set the working directory to /root
 WORKDIR /root
 
 # Install any needed packages specified in requirements.txt
-RUN yum -y install gcc-c++ make cmake git flex bison autoconf automake libtool bc
+RUN yum -y install gcc-c++ make cmake git flex bison autoconf automake libtool bc libsqlite3x-devel
 RUN yum -y install openssl-devel libuuid-devel readline-devel libxml2-devel curl-devel libicu-devel
 RUN yum -y install zlib-devel bzip2 bzip2-devel libjpeg-devel rpm-devel rpm-build redhat-rpm-config
 
