@@ -14,7 +14,7 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.25
+VERSION = 1.26
 
 # If a site.mk file exists in the parent dir, include it. Use this
 # to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
@@ -192,8 +192,9 @@ fits_dist=$(fits)3270.tar.gz
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE-0.16.2-beta
-stare_dist=$(stare).tar.gz
+# stare=STARE-0.16.2-beta
+stare=STARE-0.16.3
+stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
 src = src

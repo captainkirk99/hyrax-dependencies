@@ -43,6 +43,9 @@ nominally include $prefix/bin and $prefix/deps/bin.
 
 Notes
 
+STARE 0.16.3 Added. I also sped up the build and added a GitHub
+Actions workflow.
+
 bzip2 is needed for this to work. But, if you're building Hyrax, get
 bzip2-devel since that will be needed later on.
 
