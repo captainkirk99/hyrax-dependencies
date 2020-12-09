@@ -194,7 +194,7 @@ icu_dist=icu4c-3_6-src.tgz
 
 # stare=STARE-0.16.2-beta
 stare=STARE-0.16.3
-stare_dist=$(stare).tar.gz
+stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
 src = src
