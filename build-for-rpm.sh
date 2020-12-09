@@ -8,7 +8,7 @@
 # compiler to use. Since C6 lacks a C++-11 compiler, this can be used to supress
 # building some of the dependencies. jhrg 10/28/19
 
-# -e: Exit imediately if a command, command in a pipeline, etc., fails
+# -e: Exit immediately if a command, command in a pipeline, etc., fails
 # -u: Treat unset variables in substitutions as errors (except for @ and *)
 set -eu
 
