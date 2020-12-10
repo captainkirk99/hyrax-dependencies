@@ -408,39 +408,6 @@ proj-really-clean: proj-clean
 .PHONY: proj
 proj: proj-install-stamp
 
-# GDAL 
-gdal_src=$(src)/$(gdal)
-gdal_prefix=$(prefix)/deps
-
-$(gdal_src)-stamp:
-	tar -xzf downloads/$(gdal_dist) -C $(src)
-	echo timestamp > $(gdal_src)-stamp
-
-gdal-configure-stamp:  $(gdal_src)-stamp
-	(cd $(gdal_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
-	--prefix=$(gdal_prefix) --with-openjpeg=$(openjpeg_prefix))
-	echo timestamp > gdal-configure-stamp
-
-gdal-compile-stamp: gdal-configure-stamp
-	(cd $(gdal_src) && $(MAKE) $(MFLAGS))
-	echo timestamp > gdal-compile-stamp
-
-# Force -j1 for install
-gdal-install-stamp: gdal-compile-stamp
-	(cd $(gdal_src) && $(MAKE) $(MFLAGS) -j1 install)
-	echo timestamp > gdal-install-stamp
-
-gdal-clean:
-	-rm gdal-*-stamp
-	-(cd  $(gdal_src) && $(MAKE) $(MFLAGS) clean)
-
-gdal-really-clean: gdal-clean
-	-rm $(gdal_src)-stamp
-	-rm -rf $(gdal_src)
-
-.PHONY: gdal
-gdal: gdal-install-stamp
-
 # GDAL2
 gdal2_src=$(src)/$(gdal2)
 gdal2_prefix=$(prefix)/deps
@@ -451,8 +418,8 @@ $(gdal2_src)-stamp:
 
 gdal2-configure-stamp:  $(gdal2_src)-stamp
 	(cd $(gdal2_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-	--without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --without-sqlite3 \
+	--without-pg --without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
 	echo timestamp > gdal2-configure-stamp
 
 # 	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" 
@@ -478,44 +445,6 @@ gdal2-really-clean: gdal2-clean
 
 .PHONY: gdal2
 gdal2: gdal2-install-stamp
-
-# GDAL3
-gdal3_src=$(src)/$(gdal3)
-gdal3_prefix=$(prefix)/deps
-
-$(gdal3_src)-stamp:
-	tar -xzf downloads/$(gdal3_dist) -C $(src)
-	echo timestamp > $(gdal3_src)-stamp
-
-gdal3-configure-stamp:  $(gdal3_src)-stamp
-	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) \
-	CPPFLAGS="-I$(proj_prefix)/include $(CPPFLAGS)" \
-	LDFLAGS="-L$(proj_prefix)/lib $(LDFLAGS)" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal3_prefix) \
-	--with-pic --with-proj=$(proj_prefix) --without-python)
-	echo timestamp > gdal3-configure-stamp
-
-# --with-openjpeg=$(openjpeg_prefix))
-
-gdal3-compile-stamp: gdal3-configure-stamp
-	(cd $(gdal3_src) && $(MAKE) $(MFLAGS))
-	echo timestamp > gdal3-compile-stamp
-
-# Force -j1 for install
-gdal3-install-stamp: gdal3-compile-stamp
-	(cd $(gdal3_src) && $(MAKE) $(MFLAGS) -j1 install)
-	echo timestamp > gdal3-install-stamp
-
-gdal3-clean:
-	-rm gdal3-*-stamp
-	-(cd  $(gdal3_src) && $(MAKE) $(MFLAGS) clean)
-
-gdal3-really-clean: gdal3-clean
-	-rm $(gdal3_src)-stamp
-	-rm -rf $(gdal3_src)
-
-.PHONY: gdal3
-gdal3: gdal3-install-stamp
 
 # GDAL4
 gdal4_src=$(src)/$(gdal4)

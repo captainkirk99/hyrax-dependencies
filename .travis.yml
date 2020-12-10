@@ -21,7 +21,9 @@ dist: xenial          # or bionic | xenial | trusty | precise with xenial as def
 
 sudo: false
 
-language: cpp
+language: minimal
+
+# cpp
 
 compiler: gcc
 
@@ -61,6 +63,7 @@ jobs:
     script: 
     - export DEPS_BUILD=centos7
     - mkdir -p $HOME/centos7/install
+    - df -h
     # Note that for CentOS7, we build the dependencies so that STARE is included (but not for C6 or Debian)
     # The Makefile checks the value of the env var $BUILD_STARE. jhrg 10/28/19
     # I changed the sense of this so STARE is built by default since this was causing problems for developer
