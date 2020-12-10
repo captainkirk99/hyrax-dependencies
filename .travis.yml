@@ -14,12 +14,12 @@
 #
 # I removed the Ubuntu/deb build because we're not using it. jhrg 12/08/20
 
-virt: lxd             # use an lxd container
+# virt: lxd             # use an lxd container
 arch: amd64           # optional, this is default, routes to a full VM
 os: linux             # optional, this is default
 dist: xenial          # or bionic | xenial | trusty | precise with xenial as default
 
-sudo: false
+# sudo: false
 
 language: minimal
 
