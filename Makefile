@@ -23,7 +23,8 @@ VERSION = 1.26
 -include ../hyrax-deps-site.mk
 
 # These options speed up the builds jhrg 12/08/20
-CONFIGURE_FLAGS = --disable-dependency-tracking --enable-silent-rules
+# but defining this here breaks the static builds. jhrg 12/09/20
+#CONFIGURE_FLAGS = --disable-dependency-tracking --enable-silent-rules
 
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
@@ -105,7 +106,7 @@ list-built:
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
 	for d in $(all_static_deps); \
-		do CONFIGURE_FLAGS="$(CONFIGURE_FLAGS) --disable-shared" $(MAKE) $(MFLAGS) $$d; done
+		do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
@@ -199,6 +200,8 @@ stare_dist=$(stare).tar.bz2
 # NB The environment variable $prefix is assumed to be set.
 src = src
 
+defaults = --disable-dependency-tracking --enable-silent-rules
+
 # Specific source packages below here
 
 # JPEG
@@ -215,7 +218,7 @@ $(jpeg_src)-stamp:
 	echo timestamp > $(jpeg_src)-stamp
 
 jpeg-configure-stamp:  $(jpeg_src)-stamp
-	(cd $(jpeg_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
+	(cd $(jpeg_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
 	echo timestamp > jpeg-configure-stamp
 
 jpeg-compile-stamp: jpeg-configure-stamp
@@ -254,7 +257,7 @@ $(cmake_src)-stamp:
 	echo timestamp > $(cmake_src)-stamp
 
 cmake-configure-stamp:  $(cmake_src)-stamp
-	(cd $(cmake_src) && ./configure --prefix=$(cmake_prefix))
+	(cd $(cmake_src) && ./configure $(defaults) --prefix=$(cmake_prefix))
 	echo timestamp > cmake-configure-stamp
 
 cmake-compile-stamp: cmake-configure-stamp
@@ -285,7 +288,7 @@ $(bison_src)-stamp:
 	echo timestamp > $(bison_src)-stamp
 
 bison-configure-stamp:  $(bison_src)-stamp
-	(cd $(bison_src) && ./configure --prefix=$(bison_prefix))
+	(cd $(bison_src) && ./configure $(defaults) --prefix=$(bison_prefix))
 	echo timestamp > bison-configure-stamp
 
 bison-compile-stamp: bison-configure-stamp
@@ -347,7 +350,7 @@ $(sqlite3_src)-stamp:
 	echo timestamp > $(sqlite3_src)-stamp
 
 sqlite3-configure-stamp:  $(sqlite3_src)-stamp
-	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(sqlite3_prefix) )
+	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(sqlite3_prefix) )
 	echo timestamp > sqlite3-configure-stamp
 
 sqlite3-compile-stamp: sqlite3-configure-stamp
@@ -383,7 +386,7 @@ $(proj_src)-stamp:
 
 proj-configure-stamp:  $(proj_src)-stamp
 	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(proj_prefix) )
+	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -559,7 +562,7 @@ $(gridfields_src)-stamp:
 	echo timestamp > $(gridfields_src)-stamp
 
 gridfields-configure-stamp:  $(gridfields_src)-stamp
-	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) --disable-netcdf \
+	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --disable-netcdf \
 	--prefix=$(gridfields_prefix) CXXFLAGS="-fPIC -O2")
 	echo timestamp > gridfields-configure-stamp
 
@@ -592,7 +595,7 @@ $(hdf4_src)-stamp:
 	echo timestamp > $(hdf4_src)-stamp
 
 hdf4-configure-stamp:  $(hdf4_src)-stamp
-	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS=-w \
+	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) CFLAGS=-w \
 	--disable-fortran --enable-production --disable-netcdf		\
 	--with-pic --with-jpeg=$(jpeg_prefix) --prefix=$(hdf4_prefix))
 	echo timestamp > hdf4-configure-stamp
@@ -633,7 +636,7 @@ $(hdfeos_src)-stamp:
 
 hdfeos-configure-stamp:  $(hdfeos_src)-stamp
 	(cd $(hdfeos_src) && ./configure CC=$(hdf4_prefix)/bin/h4cc	\
-	$(CONFIGURE_FLAGS) --disable-fortran --enable-production	\
+	$(CONFIGURE_FLAGS) $(defaults) --disable-fortran --enable-production	\
 	--with-pic --enable-install-include --with-hdf4=$(hdf4_prefix)	\
 	--prefix=$(hdfeos_prefix))
 	echo timestamp > hdfeos-configure-stamp
@@ -669,7 +672,7 @@ $(hdf5_src)-stamp:
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
 	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) \
-	 $(hdf5_configure_flags) --prefix=$(hdf5_prefix) \
+	 $(hdf5_configure_flags) $(defaults) --prefix=$(hdf5_prefix) \
 	 CFLAGS="-fPIC -O2 -w")
 	echo timestamp > hdf5-configure-stamp
 
@@ -702,7 +705,7 @@ $(netcdf4_src)-stamp:
 	echo timestamp > $(netcdf4_src)-stamp
 
 netcdf4-configure-stamp:  $(netcdf4_src)-stamp
-	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
+	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) \
 	--prefix=$(netcdf4_prefix) CPPFLAGS=-I$(hdf5_prefix)/include	\
 	CFLAGS="-fPIC -O2" LDFLAGS=-L$(hdf5_prefix)/lib)
 	echo timestamp > netcdf4-configure-stamp
@@ -736,7 +739,7 @@ $(fits_src)-stamp:
 	echo timestamp > $(fits_src)-stamp
 
 fits-configure-stamp:  $(fits_src)-stamp
-	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(fits_prefix))
+	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(fits_prefix))
 	echo timestamp > fits-configure-stamp
 
 fits-compile-stamp: fits-configure-stamp
@@ -774,7 +777,7 @@ icu-configure-stamp:  $(src)/$(icu)-stamp
 	else OS="unknown"; fi && \
 	if test "$OS" = "osx"; then ./runConfigureICU MacOSX --prefix=$(icu_prefix) --disable-layout --disable-samples; \
 	elif test "$OS" = "linux"; then ./runConfigureICU Linux $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; \
-	else ./configure $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
+	else ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
 	echo timestamp > icu-configure-stamp
 
 icu-compile-stamp: icu-configure-stamp
