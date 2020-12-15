@@ -19,21 +19,21 @@ on:
 
 jobs:
   ubuntu-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
       # Run commands using the runners shell
       - name: make-for-actions
         run: make -j8 for-static-rpm
-      - name: build ubuntu tar ball
-        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
-          name: hyrax-deps-ubuntu.tar.gz
+          path: ${{ github.workspace }}/build/deps
+          name: hyrax-deps-ubuntu.zip
+
+#      - name: build ubuntu tar ball
+#        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
 
   # Build on OSX just to check that changes work in our dev environments
   osx-build:
@@ -50,7 +50,7 @@ jobs:
   centos-7-build:
     runs-on: ubuntu-latest
     container:
-      image: opendap/centos7_hyrax_builder:1.1
+      image: opendap/centos7_hyrax_builder:1.3
 
     steps:
       - name: checkout
@@ -60,9 +60,10 @@ jobs:
           pwd
           make -j8 for-static-rpm
           ls -lR $prefix/deps
-          tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: /hyrax-deps-centos7.tar.gz
-          name: hyrax-deps-centos7.tar.gz
+          path: /$prefix/deps
+          name: hyrax-centos7-deps.zip
+
+# tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
