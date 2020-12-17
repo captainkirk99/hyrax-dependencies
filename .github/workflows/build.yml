@@ -23,6 +23,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+<<<<<<< HEAD
 
       # Run commands using the runner's shell
       - name: make static libraries
@@ -34,6 +35,19 @@ jobs:
 #        with:
 #          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
 #          name: hyrax-deps-ubuntu.tar.gz
+=======
+      # Run commands using the runners shell
+      - name: make-for-actions
+        run: make -j8 for-static-rpm
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ github.workspace }}/build/deps
+          name: hyrax-deps-ubuntu.zip
+
+#      - name: build ubuntu tar ball
+#        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
+>>>>>>> a22a6b52efd4b23fec09cca0a6dd01f29720b043
 
   # Build on OSX just to check that changes work in our dev environments
   osx-build:
@@ -50,7 +64,7 @@ jobs:
   centos-7-build:
     runs-on: ubuntu-latest
     container:
-      image: opendap/centos7_hyrax_builder:1.1
+      image: opendap/centos7_hyrax_builder:1.3
 
     steps:
       - name: checkout
@@ -59,6 +73,7 @@ jobs:
         run: |
           pwd
           make -j8 for-static-rpm
+<<<<<<< HEAD
           mkdir -p $SOURCE_DIR
           ls -lR $prefix
           tar -czf $SOURCE_DIR/hyrax-deps-centos7.tar.gz -C $prefix/deps .
@@ -74,3 +89,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECREY_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
           AWS_REGION: 'us-east-1'               # optional: defaults to us-east-1
           SOURCE_DIR: '$prefix/artifacts/'      # optional: defaults to entire repository
+=======
+          ls -lR $prefix/deps
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: /$prefix/deps
+          name: hyrax-centos7-deps.zip
+
+# tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
+>>>>>>> a22a6b52efd4b23fec09cca0a6dd01f29720b043
