@@ -23,19 +23,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-<<<<<<< HEAD
-
-      # Run commands using the runner's shell
-      - name: make static libraries
-        run: make -j8 for-static-rpm
-#      - name: build ubuntu tar ball
-#        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
-#      - name: upload to S3
-#        uses: actions/upload-artifact@v2
-#        with:
-#          path: ${{ github.workspace }}/build/hyrax-deps-ubuntu.tar.gz
-#          name: hyrax-deps-ubuntu.tar.gz
-=======
       # Run commands using the runners shell
       - name: make-for-actions
         run: make -j8 for-static-rpm
@@ -47,7 +34,6 @@ jobs:
 
 #      - name: build ubuntu tar ball
 #        run: tar -czf $prefix/hyrax-deps-ubuntu.tar.gz -C $prefix/deps .
->>>>>>> a22a6b52efd4b23fec09cca0a6dd01f29720b043
 
   # Build on OSX just to check that changes work in our dev environments
   osx-build:
@@ -73,23 +59,6 @@ jobs:
         run: |
           pwd
           make -j8 for-static-rpm
-<<<<<<< HEAD
-          mkdir -p $SOURCE_DIR
-          ls -lR $prefix
-          tar -czf $SOURCE_DIR/hyrax-deps-centos7.tar.gz -C $prefix/deps .
-      - name: synch to S3
-        # run: aws s3 sync --follow-symlinks --delete $SOURCE_DIR s3://$AWS_S3_BUCKET
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --follow-symlinks --delete
-          # --acl public-read
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_TRAVIS_HYRAX_DEPENDENCIES }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECREY_KEY_TRAVIS_HYRAX_DEPENDENCIES }}
-          AWS_REGION: 'us-east-1'               # optional: defaults to us-east-1
-          SOURCE_DIR: '$prefix/artifacts/'      # optional: defaults to entire repository
-=======
           ls -lR $prefix/deps
       - name: upload artifact
         uses: actions/upload-artifact@v2
@@ -98,4 +67,3 @@ jobs:
           name: hyrax-centos7-deps.zip
 
 # tar -czf /hyrax-deps-centos7.tar.gz -C $prefix/deps .
->>>>>>> a22a6b52efd4b23fec09cca0a6dd01f29720b043
