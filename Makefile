@@ -14,13 +14,18 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.25
+VERSION = 1.26
 
 # If a site.mk file exists in the parent dir, include it. Use this
 # to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
-# which are needed to build the proj library in some obscure cases. 
+# which are needed to build the proj library in some obscure cases.
+
 # jhrg 12/5/20
 -include ../hyrax-deps-site.mk
+
+# These options speed up the builds jhrg 12/08/20
+# but defining this here breaks the static builds. jhrg 12/09/20
+#CONFIGURE_FLAGS = --disable-dependency-tracking --enable-silent-rules
 
 # Changed the sense of the BUILD_STARE env var so that if it's undefined,
 # the library is built. Setting it to 'no' suppresses the library build.
@@ -38,7 +43,7 @@ endif
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
 deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-proj gdal4 icu stare
+sqlite3 proj gdal4 icu stare list-built
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -50,7 +55,7 @@ proj gdal4 icu stare
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
 all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits proj gdal4 stare
+netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
@@ -58,11 +63,12 @@ netcdf4 fits proj gdal4 stare
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
 travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits proj gdal4 stare
+fits sqlite3 proj gdal4 stare list-built
 
+# actions_build is used for testing. So named because of the new GitHub
+# Actions workflow. jhrg 12/08/20
 .PHONY: $(actions_build)
-actions_build = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits proj gdal4 stare
+actions_build = bison sqlite3 proj gdal4 list-built
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -74,6 +80,13 @@ all: prefix-set
 prefix-set:
 	@if test -z "$$prefix"; then \
 	echo "The env variable 'prefix' must be set. See README"; exit 1; fi
+
+.PHONY: list-built
+list-built:
+	@echo
+	@echo "*** Packages built and installed ***"
+	@ls -1 *-install-stamp
+	@echo "*** ---------------------------- ***"
 
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
@@ -88,7 +101,7 @@ prefix-set:
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
 	for d in $(all_static_deps); \
-		do CONFIGURE_FLAGS=--disable-shared $(MAKE) $(MFLAGS) $$d; done
+		do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
@@ -130,6 +143,9 @@ jpeg_dist=jpegsrc.v6b.tar.gz
 openjpeg=openjpeg-2.1.1
 openjpeg_dist=$(openjpeg).tar.gz
 
+sqlite3=sqlite-autoconf-3340000
+sqlite3_dist=$(sqlite3).tar.gz
+
 # This is a new and (4/2019) experimental API. Don't build it by
 # default. It will break the HDFEOS code in the hdf4 handler. jhrg
 # 4/24/2019
@@ -164,19 +180,22 @@ hdf5_dist=$(hdf5).tar.bz2
 netcdf4=netcdf-c-4.7.3
 netcdf4_dist=$(netcdf4).tar.gz
 
-#fits=cfitsio
-#fits_dist=$(fits)3270.tar.gz
-fits=cfitsio-3.49
-fits_dist=$(fits).tar.gz
+fits=cfitsio
+fits_dist=$(fits)3270.tar.gz
+#fits=cfitsio-3.49
+#fits_dist=$(fits).tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
 
-stare=STARE-0.16.2-beta
-stare_dist=$(stare).tar.gz
+# stare=STARE-0.16.2-beta
+stare=STARE-0.16.3
+stare_dist=$(stare).tar.bz2
 
 # NB The environment variable $prefix is assumed to be set.
 src = src
+
+defaults = --disable-dependency-tracking --enable-silent-rules
 
 # Specific source packages below here
 
@@ -194,7 +213,7 @@ $(jpeg_src)-stamp:
 	echo timestamp > $(jpeg_src)-stamp
 
 jpeg-configure-stamp:  $(jpeg_src)-stamp
-	(cd $(jpeg_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
+	(cd $(jpeg_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(jpeg_prefix) CFLAGS="-O2 -fPIC")
 	echo timestamp > jpeg-configure-stamp
 
 jpeg-compile-stamp: jpeg-configure-stamp
@@ -233,7 +252,7 @@ $(cmake_src)-stamp:
 	echo timestamp > $(cmake_src)-stamp
 
 cmake-configure-stamp:  $(cmake_src)-stamp
-	(cd $(cmake_src) && ./configure --prefix=$(cmake_prefix))
+	(cd $(cmake_src) && ./configure $(defaults) --prefix=$(cmake_prefix))
 	echo timestamp > cmake-configure-stamp
 
 cmake-compile-stamp: cmake-configure-stamp
@@ -264,7 +283,7 @@ $(bison_src)-stamp:
 	echo timestamp > $(bison_src)-stamp
 
 bison-configure-stamp:  $(bison_src)-stamp
-	(cd $(bison_src) && ./configure --prefix=$(bison_prefix))
+	(cd $(bison_src) && ./configure $(defaults) --prefix=$(bison_prefix))
 	echo timestamp > bison-configure-stamp
 
 bison-compile-stamp: bison-configure-stamp
@@ -318,6 +337,36 @@ openjpeg-really-clean: openjpeg-clean
 .PHONY: openjpeg
 openjpeg: openjpeg-install-stamp
 
+sqlite3_src=$(src)/$(sqlite3)
+sqlite3_prefix=$(prefix)/deps
+
+$(sqlite3_src)-stamp:
+	tar -xzf downloads/$(sqlite3_dist) -C $(src)
+	echo timestamp > $(sqlite3_src)-stamp
+
+sqlite3-configure-stamp:  $(sqlite3_src)-stamp
+	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(sqlite3_prefix) )
+	echo timestamp > sqlite3-configure-stamp
+
+sqlite3-compile-stamp: sqlite3-configure-stamp
+	(cd $(sqlite3_src) && $(MAKE) $(MFLAGS))
+	echo timestamp > sqlite3-compile-stamp
+
+sqlite3-install-stamp: sqlite3-compile-stamp
+	(cd $(sqlite3_src) && $(MAKE) $(MFLAGS) -j1 install)
+	echo timestamp > sqlite3-install-stamp
+
+sqlite3-clean:
+	-rm sqlite3-*-stamp
+	-(cd  $(sqlite3_src) && $(MAKE) $(MFLAGS) uninstall clean)
+
+sqlite3-really-clean: sqlite3-clean
+	-rm $(src)/sqlite3-*-stamp	
+	-rm -rf $(sqlite3_src)
+
+.PHONY: sqlite3
+sqlite3: sqlite3-install-stamp
+
 # proj6 Make a special directory for this since HDFEOS also installs
 # a 'proj.h' header and the hdf4 handler needs to find it. In the
 # future, invert this, making HDFEOS use the special install. The
@@ -331,8 +380,8 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS=$(SQLITE3_CFLAGS) SQLITE3_LIBS=$(SQLITE3_LIBS) \
-		./configure --prefix=$(proj_prefix) )
+	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
+	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -354,39 +403,6 @@ proj-really-clean: proj-clean
 .PHONY: proj
 proj: proj-install-stamp
 
-# GDAL 
-gdal_src=$(src)/$(gdal)
-gdal_prefix=$(prefix)/deps
-
-$(gdal_src)-stamp:
-	tar -xzf downloads/$(gdal_dist) -C $(src)
-	echo timestamp > $(gdal_src)-stamp
-
-gdal-configure-stamp:  $(gdal_src)-stamp
-	(cd $(gdal_src) && ./configure $(CONFIGURE_FLAGS) --with-pic	\
-	--prefix=$(gdal_prefix) --with-openjpeg=$(openjpeg_prefix))
-	echo timestamp > gdal-configure-stamp
-
-gdal-compile-stamp: gdal-configure-stamp
-	(cd $(gdal_src) && $(MAKE) $(MFLAGS))
-	echo timestamp > gdal-compile-stamp
-
-# Force -j1 for install
-gdal-install-stamp: gdal-compile-stamp
-	(cd $(gdal_src) && $(MAKE) $(MFLAGS) -j1 install)
-	echo timestamp > gdal-install-stamp
-
-gdal-clean:
-	-rm gdal-*-stamp
-	-(cd  $(gdal_src) && $(MAKE) $(MFLAGS) clean)
-
-gdal-really-clean: gdal-clean
-	-rm $(gdal_src)-stamp
-	-rm -rf $(gdal_src)
-
-.PHONY: gdal
-gdal: gdal-install-stamp
-
 # GDAL2
 gdal2_src=$(src)/$(gdal2)
 gdal2_prefix=$(prefix)/deps
@@ -397,8 +413,8 @@ $(gdal2_src)-stamp:
 
 gdal2-configure-stamp:  $(gdal2_src)-stamp
 	(cd $(gdal2_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-	--without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
+	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --without-sqlite3 \
+	--without-pg --without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
 	echo timestamp > gdal2-configure-stamp
 
 # 	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" 
@@ -425,44 +441,6 @@ gdal2-really-clean: gdal2-clean
 .PHONY: gdal2
 gdal2: gdal2-install-stamp
 
-# GDAL3
-gdal3_src=$(src)/$(gdal3)
-gdal3_prefix=$(prefix)/deps
-
-$(gdal3_src)-stamp:
-	tar -xzf downloads/$(gdal3_dist) -C $(src)
-	echo timestamp > $(gdal3_src)-stamp
-
-gdal3-configure-stamp:  $(gdal3_src)-stamp
-	(cd $(gdal3_src) && PATH=$(proj_prefix)/bin:$(PATH) \
-	CPPFLAGS="-I$(proj_prefix)/include $(CPPFLAGS)" \
-	LDFLAGS="-L$(proj_prefix)/lib $(LDFLAGS)" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal3_prefix) \
-	--with-pic --with-proj=$(proj_prefix) --without-python)
-	echo timestamp > gdal3-configure-stamp
-
-# --with-openjpeg=$(openjpeg_prefix))
-
-gdal3-compile-stamp: gdal3-configure-stamp
-	(cd $(gdal3_src) && $(MAKE) $(MFLAGS))
-	echo timestamp > gdal3-compile-stamp
-
-# Force -j1 for install
-gdal3-install-stamp: gdal3-compile-stamp
-	(cd $(gdal3_src) && $(MAKE) $(MFLAGS) -j1 install)
-	echo timestamp > gdal3-install-stamp
-
-gdal3-clean:
-	-rm gdal3-*-stamp
-	-(cd  $(gdal3_src) && $(MAKE) $(MFLAGS) clean)
-
-gdal3-really-clean: gdal3-clean
-	-rm $(gdal3_src)-stamp
-	-rm -rf $(gdal3_src)
-
-.PHONY: gdal3
-gdal3: gdal3-install-stamp
-
 # GDAL4
 gdal4_src=$(src)/$(gdal4)
 gdal4_prefix=$(prefix)/deps
@@ -471,14 +449,12 @@ $(gdal4_src)-stamp:
 	tar -xzf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
-#	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --with-proj=/usr/local \
-#	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) --without-pg)
-
+# I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python \
-	--without-netcdf --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-	--with-proj=$(proj_prefix) --without-pg)
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
+    --with-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
+    --without-netcdf --without-sqlite3 --without-pg)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
@@ -510,7 +486,7 @@ $(gridfields_src)-stamp:
 	echo timestamp > $(gridfields_src)-stamp
 
 gridfields-configure-stamp:  $(gridfields_src)-stamp
-	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) --disable-netcdf \
+	(cd $(gridfields_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --disable-netcdf \
 	--prefix=$(gridfields_prefix) CXXFLAGS="-fPIC -O2")
 	echo timestamp > gridfields-configure-stamp
 
@@ -543,7 +519,7 @@ $(hdf4_src)-stamp:
 	echo timestamp > $(hdf4_src)-stamp
 
 hdf4-configure-stamp:  $(hdf4_src)-stamp
-	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS) CFLAGS=-w \
+	(cd $(hdf4_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) CFLAGS=-w \
 	--disable-fortran --enable-production --disable-netcdf		\
 	--with-pic --with-jpeg=$(jpeg_prefix) --prefix=$(hdf4_prefix))
 	echo timestamp > hdf4-configure-stamp
@@ -584,7 +560,7 @@ $(hdfeos_src)-stamp:
 
 hdfeos-configure-stamp:  $(hdfeos_src)-stamp
 	(cd $(hdfeos_src) && ./configure CC=$(hdf4_prefix)/bin/h4cc	\
-	$(CONFIGURE_FLAGS) --disable-fortran --enable-production	\
+	$(CONFIGURE_FLAGS) $(defaults) --disable-fortran --enable-production	\
 	--with-pic --enable-install-include --with-hdf4=$(hdf4_prefix)	\
 	--prefix=$(hdfeos_prefix))
 	echo timestamp > hdfeos-configure-stamp
@@ -620,7 +596,7 @@ $(hdf5_src)-stamp:
 
 hdf5-configure-stamp:  $(hdf5_src)-stamp
 	(cd $(hdf5_src) && ./configure $(CONFIGURE_FLAGS) \
-	 $(hdf5_configure_flags) --prefix=$(hdf5_prefix) \
+	 $(hdf5_configure_flags) $(defaults) --prefix=$(hdf5_prefix) \
 	 CFLAGS="-fPIC -O2 -w")
 	echo timestamp > hdf5-configure-stamp
 
@@ -653,7 +629,7 @@ $(netcdf4_src)-stamp:
 	echo timestamp > $(netcdf4_src)-stamp
 
 netcdf4-configure-stamp:  $(netcdf4_src)-stamp
-	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS)		\
+	(cd $(netcdf4_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) \
 	--prefix=$(netcdf4_prefix) CPPFLAGS=-I$(hdf5_prefix)/include	\
 	CFLAGS="-fPIC -O2" LDFLAGS=-L$(hdf5_prefix)/lib)
 	echo timestamp > netcdf4-configure-stamp
@@ -687,7 +663,7 @@ $(fits_src)-stamp:
 	echo timestamp > $(fits_src)-stamp
 
 fits-configure-stamp:  $(fits_src)-stamp
-	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) --prefix=$(fits_prefix))
+	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(fits_prefix))
 	echo timestamp > fits-configure-stamp
 
 fits-compile-stamp: fits-configure-stamp
@@ -725,7 +701,7 @@ icu-configure-stamp:  $(src)/$(icu)-stamp
 	else OS="unknown"; fi && \
 	if test "$OS" = "osx"; then ./runConfigureICU MacOSX --prefix=$(icu_prefix) --disable-layout --disable-samples; \
 	elif test "$OS" = "linux"; then ./runConfigureICU Linux $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; \
-	else ./configure $(CONFIGURE_FLAGS) --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
+	else ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(icu_prefix) --disable-layout --disable-samples; fi)
 	echo timestamp > icu-configure-stamp
 
 icu-compile-stamp: icu-configure-stamp
@@ -753,7 +729,7 @@ stare_prefix=$(prefix)/deps
 
 #STARE
 $(src)/$(stare)-stamp:
-	tar -xzf downloads/$(stare_dist) -C $(src)
+	tar -xjf downloads/$(stare_dist) -C $(src)
 	echo timestamp > $(src)/$(stare)-stamp
 
 stare-configure-stamp: $(src)/$(stare)-stamp
