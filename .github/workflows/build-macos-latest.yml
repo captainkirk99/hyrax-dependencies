@@ -9,9 +9,9 @@ env:
 # events but only for the master branch
 on:
   push:
-    branches: [ actions-test master ]
+    branches: [ actions-test, master ]
   pull_request:
-    branches: [ actions-test master ]
+    branches: [ actions-test, master ]
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run
