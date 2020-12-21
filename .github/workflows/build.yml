@@ -24,13 +24,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       # Run commands using the runners shell
-      - name: make-for-actions
+      - name: make static dependency libraries
         run: make -j8 for-static-rpm
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: ${{ github.workspace }}/build/deps
-          name: hyrax-deps-ubuntu.zip
 
 
   # Build on OSX just to check that changes work in our dev environments
@@ -38,8 +33,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: make static libraries
-        run: make -j8 for-static-rpm
+      - name: make as developers will
+        run: make -j8
 
   # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
   # and https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
@@ -53,7 +48,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: build
+      - name: make static dependency libraries
         run: |
           pwd
           make -j8 for-static-rpm
