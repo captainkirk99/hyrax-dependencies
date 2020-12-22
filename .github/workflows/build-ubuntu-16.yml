@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI-Ubuntu-16
 
 env:
   prefix: ${{ github.workspace }}/build
@@ -26,3 +26,9 @@ jobs:
       # Run commands using the runners shell
       - name: make static dependency libraries
         run: make -j8 for-static-rpm
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: /$prefix/deps
+          name: hyrax-ubuntu16-deps.zip
+
