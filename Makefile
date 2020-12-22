@@ -454,7 +454,7 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
     --with-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
-    --without-netcdf --without-sqlite3 --without-pg)
+    --without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
