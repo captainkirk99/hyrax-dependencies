@@ -4,6 +4,7 @@ name: CI-MacOS-latest
 
 env:
   prefix: ${{ github.workspace }}/build
+  threads: 16
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -24,4 +25,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: make as developers will
-        run: make -j8
+        run: make --jobs=$threads

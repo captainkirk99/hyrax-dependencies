@@ -4,6 +4,7 @@ name: CI-Ubuntu-16
 
 env:
   prefix: ${{ github.workspace }}/build
+  threads: 16
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -25,10 +26,12 @@ jobs:
       - uses: actions/checkout@v2
       # Run commands using the runners shell
       - name: make static dependency libraries
-        run: make -j8 for-static-rpm
+        run: |
+          make --jobs=$threads for-static-rpm
+          ls -lR $prefix/deps
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: /$prefix/deps
+          path: $prefix/deps
           name: hyrax-ubuntu16-deps.zip
 
