@@ -32,6 +32,6 @@ jobs:
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: $prefix/deps
+          path: ${{ env.prefix }}/deps
           name: hyrax-ubuntu16-deps.zip
 
