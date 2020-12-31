@@ -93,6 +93,16 @@ list-built:
 	@ls -1 *-install-stamp
 	@echo "*** ---------------------------- ***"
 
+list-built-clean:
+	@echo
+	@echo "*** I would clean the list stuff if I knew what to do. ***"
+	@echo "*** ---------------------------- ***"
+
+list-built-really-clean:
+	@echo
+	@echo "*** I would really_clean the list stuff if I knew what to do. ***"
+	@echo "*** ---------------------------- ***"
+
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
 # dependencies installed since they will be statically linked to them.
@@ -123,7 +133,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --file hyrax-dependencies-$(VERSION).tar \
+	(cd ../ && tar --create --gzip --file hyrax-dependencies-$(VERSION).tgz \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
