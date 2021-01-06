@@ -451,9 +451,9 @@ $(gdal4_src)-stamp:
 
 # I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
 gdal4-configure-stamp:  $(gdal4_src)-stamp
-	(cd $(gdal4_src) && \
+	(cd $(gdal4_src) && CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-    --with-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
+    --with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
     --without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
 	echo timestamp > gdal4-configure-stamp
 
