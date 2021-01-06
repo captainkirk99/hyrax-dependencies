@@ -361,7 +361,7 @@ sqlite3-clean:
 	-(cd  $(sqlite3_src) && $(MAKE) $(MFLAGS) uninstall clean)
 
 sqlite3-really-clean: sqlite3-clean
-	-rm $(src)/sqlite3-*-stamp	
+	-rm $(src)/sqlite-*-stamp
 	-rm -rf $(sqlite3_src)
 
 .PHONY: sqlite3
