@@ -140,7 +140,7 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.1.1
+openjpeg=openjpeg-2.3.1
 openjpeg_dist=$(openjpeg).tar.gz
 
 sqlite3=sqlite-autoconf-3340000
@@ -315,7 +315,8 @@ $(openjpeg_src)-stamp:
 
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
 	(cd $(openjpeg_src) \
-	 && cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
+	 && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps \
+	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -380,7 +381,8 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
+	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" \
+	SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
 	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) )
 	echo timestamp > proj-configure-stamp
 
@@ -451,10 +453,14 @@ $(gdal4_src)-stamp:
 
 # I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
 gdal4-configure-stamp:  $(gdal4_src)-stamp
-	(cd $(gdal4_src) && CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-    --with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
-    --without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
+	(cd $(gdal4_src) && \
+	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
+	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3" \
+	OPENJPEG_LIBS="-L/usr/lib64" \
+	CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg \
+	--with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
+	--without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
