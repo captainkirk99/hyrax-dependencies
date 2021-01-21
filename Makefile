@@ -456,7 +456,7 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
 	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3" \
-	OPENJPEG_LIBS="-L/usr/lib64" \
+	OPENJPEG_LIBS="-L/usr/lib64 -lopenjp2" \
 	CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg \
 	--with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
