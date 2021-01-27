@@ -88,6 +88,13 @@ list-built:
 	@ls -1 *-install-stamp
 	@echo "*** ---------------------------- ***"
 
+.PHONY: list-built-clean
+list-built-clean:
+
+.PHONY: list-built-really-clean
+list-built-really-clean:
+
+
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
 # dependencies installed since they will be statically linked to them.
