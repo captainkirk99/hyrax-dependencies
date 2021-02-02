@@ -147,7 +147,7 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.3.1
+openjpeg=openjpeg-2.4.0
 openjpeg_dist=$(openjpeg).tar.gz
 
 sqlite3=sqlite-autoconf-3340000
@@ -462,9 +462,9 @@ $(gdal4_src)-stamp:
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
-	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3" \
+	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
 	OPENJPEG_LIBS="-L/usr/lib64 -lopenjp2" \
-	CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
+	CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib -lproj" \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg \
 	--with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
 	--without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
