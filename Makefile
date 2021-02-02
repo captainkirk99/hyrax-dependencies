@@ -466,6 +466,7 @@ $(gdal4_src)-stamp:
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
+	CPPFLAGS=-I$(proj_prefix)/include \
 	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
 	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) \
