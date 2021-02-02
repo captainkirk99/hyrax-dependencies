@@ -14,7 +14,7 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.26
+VERSION = 1.27
 
 # If a site.mk file exists in the parent dir, include it. Use this
 # to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
@@ -88,6 +88,8 @@ list-built:
 	@ls -1 *-install-stamp
 	@echo "*** ---------------------------- ***"
 
+# These two rules are here to suppress errors about these automatically-generated
+# rules not existing. jhrg 1/27/21
 .PHONY: list-built-clean
 list-built-clean:
 
@@ -147,7 +149,8 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.3.1
+# openjpeg=openjpeg-2.3.1
+openjpeg=openjpeg-2.4.0
 openjpeg_dist=$(openjpeg).tar.gz
 
 sqlite3=sqlite-autoconf-3340000
