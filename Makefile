@@ -390,10 +390,11 @@ $(proj_src)-stamp:
 	tar -xzf downloads/$(proj_dist) -C $(src)
 	echo timestamp > $(proj_src)-stamp
 
-proj-configure-stamp:  $(proj_src)-stamp
+proj-configure-stamp: $(proj_src)-stamp
 	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" \
 	SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
-	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) )
+	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) \
+	--disable-shared)
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -465,12 +466,14 @@ $(gdal4_src)-stamp:
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
-	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3" \
-	OPENJPEG_LIBS="-L/usr/lib64 -lopenjp2" \
-	CPPFLAGS="-I$(proj_prefix)/include" LDFLAGS="-L$(proj_prefix)/lib" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg \
-	--with-static-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
-	--without-netcdf --without-sqlite3 --without-pg --enable-driver-grib)
+	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
+	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) \
+	--with-openjpeg --with-proj=$(proj_prefix) \
+	--with-proj-extra-lib-for-test="-L/Users/jimg/src/opendap/hyrax_git/build/deps/lib -lsqlite3 -lstdc++" \
+	--disable-all-optional-drivers --with-pic --without-python \
+	--without-netcdf --without-hdf5 --without-hdf4 \
+	--without-sqlite3 --without-pg --enable-driver-grib)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
