@@ -326,7 +326,7 @@ $(openjpeg_src)-stamp:
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
 	(cd $(openjpeg_src) \
 	 && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps \
-	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
+	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=on)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
