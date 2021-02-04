@@ -471,7 +471,7 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
 	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) \
 	--with-openjpeg --with-proj=$(proj_prefix) \
-	--with-proj-extra-lib-for-test="-L/Users/jimg/src/opendap/hyrax_git/build/deps/lib -lsqlite3 -lstdc++" \
+	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
 	--disable-all-optional-drivers --with-pic --without-python \
 	--without-netcdf --without-hdf5 --without-hdf4 \
 	--without-sqlite3 --without-pg --enable-driver-grib)
