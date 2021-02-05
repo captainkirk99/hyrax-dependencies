@@ -391,7 +391,7 @@ $(proj_src)-stamp:
 	echo timestamp > $(proj_src)-stamp
 
 proj-configure-stamp: $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" \
+	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include -fPIC" \
 	SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
 	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) \
 	--disable-shared)
@@ -474,7 +474,8 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
 	--disable-all-optional-drivers --with-pic --without-python \
 	--without-netcdf --without-hdf5 --without-hdf4 \
-	--without-sqlite3 --without-pg --enable-driver-grib)
+	--without-sqlite3 --without-pg --enable-driver-grib
+	--with-cfitsio=no)
 	echo timestamp > gdal4-configure-stamp
 
 gdal4-compile-stamp: gdal4-configure-stamp
