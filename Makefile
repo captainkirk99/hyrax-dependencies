@@ -473,7 +473,7 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	--with-openjpeg --with-proj=$(proj_prefix) \
 	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
 	--disable-all-optional-drivers --with-pic --without-python \
-	--without-netcdf --without-hdf5 --without-hdf4 \
+	--without-netcdf --without-hdf5 --without-hdf4 -without-png \
 	--without-sqlite3 --without-pg --enable-driver-grib \
 	--with-cfitsio=no)
 	echo timestamp > gdal4-configure-stamp
