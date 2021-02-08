@@ -21,6 +21,10 @@ VERSION = 1.27
 # which are needed to build the proj library in some obscure cases.
 
 # jhrg 12/5/20
+# Use this include file to define things to build that are
+# site-specific. Use the Makefile variable 'site-deps.' If
+# the file does not exist, no error is generated.
+site-deps = 
 -include ../hyrax-deps-site.mk
 
 # These options speed up the builds jhrg 12/08/20
@@ -34,16 +38,16 @@ VERSION = 1.27
 #
 # No longer needed - we require c++-11 for all the builds now that
 # CentOS 6 support has ended. jhrg 10/30/20
-ifeq ("$(BUILD_STARE)", "no")
-STARE =
-else
-STARE = stare
-endif
+# ifeq ("$(BUILD_STARE)", "no")
+# STARE =
+# else
+# STARE = stare
+# endif
 
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
-deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-sqlite3 proj gdal4 icu stare list-built
+deps = $(site-deps) bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 \
+netcdf4 fits sqlite3 proj gdal4 icu stare list-built
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -54,21 +58,16 @@ sqlite3 proj gdal4 icu stare list-built
 # Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits sqlite3 proj gdal4 stare list-built
+all_static_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4	\
+hdfeos hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits sqlite3 proj gdal4 stare list-built
-
-# actions_build is used for testing. So named because of the new GitHub
-# Actions workflow. jhrg 12/08/20
-.PHONY: $(actions_build)
-actions_build = bison sqlite3 proj gdal4 list-built
+travis_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4 hdfeos	\
+hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -190,10 +189,10 @@ hdf5_dist=$(hdf5).tar.bz2
 netcdf4=netcdf-c-4.7.3
 netcdf4_dist=$(netcdf4).tar.gz
 
-fits=cfitsio
-fits_dist=$(fits)3270.tar.gz
-#fits=cfitsio-3.49
-#fits_dist=$(fits).tar.gz
+# fits=cfitsio
+# fits_dist=$(fits)3270.tar.gz
+fits=cfitsio-3.49
+fits_dist=$(fits).tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
@@ -262,7 +261,7 @@ $(cmake_src)-stamp:
 	echo timestamp > $(cmake_src)-stamp
 
 cmake-configure-stamp:  $(cmake_src)-stamp
-	(cd $(cmake_src) && ./configure $(defaults) --prefix=$(cmake_prefix))
+	(cd $(cmake_src) && ./configure --prefix=$(cmake_prefix))
 	echo timestamp > cmake-configure-stamp
 
 cmake-compile-stamp: cmake-configure-stamp
