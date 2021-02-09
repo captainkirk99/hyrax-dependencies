@@ -87,7 +87,6 @@ list-built:
 	@ls -1 *-install-stamp
 	@echo "*** ---------------------------- ***"
 
-<<<<<<< HEAD
 # These two rules are here to suppress errors about these automatically-generated
 # rules not existing. jhrg 1/27/21
 .PHONY: list-built-clean
@@ -95,18 +94,6 @@ list-built-clean:
 
 .PHONY: list-built-really-clean
 list-built-really-clean:
-
-=======
-list-built-clean:
-	@echo
-	@echo "*** I would clean the list stuff if I knew what to do. ***"
-	@echo "*** ---------------------------- ***"
-
-list-built-really-clean:
-	@echo
-	@echo "*** I would really_clean the list stuff if I knew what to do. ***"
-	@echo "*** ---------------------------- ***"
->>>>>>> master
 
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
