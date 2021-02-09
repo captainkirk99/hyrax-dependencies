@@ -1,41 +1,24 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI-CentOS-7
 
 env:
   prefix: ${{ github.workspace }}/build
+  threads: 16
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ actions-test ]
+    branches: [ actions-test, master ]
   pull_request:
-    branches: [ actions-test ]
+    branches: [ actions-test, master ]
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run
 # sequentially or in parallel
 
 jobs:
-  ubuntu-build:
-    runs-on: ubuntu-16.04
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Run commands using the runner's shell
-      - name: make static libraries
-        run: make -j8 for-travis
-
-  # Build on OSX just to check that changes work in our dev environments
-  osx-build:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: make static libraries
-        run: make -j8 for-travis
-
   # For info on the docker commands: https://www.petefreitag.com/item/903.cfm
   # and https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
   # This build uses Ubuntu link to run Docker and a CentOS7 container
@@ -48,7 +31,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      - name: build
+      - name: make static dependency libraries
         run: |
-          pwd
-          make -j8 for-static-rpm
+          make --jobs=$threads for-static-rpm
+          ls -lR $prefix/deps
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ env.prefix }}/deps
+          name: hyrax-centos7-deps.zip
