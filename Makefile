@@ -14,7 +14,7 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.27
+VERSION = 1.28
 
 # If a site.mk file exists in the parent dir, include it. Use this
 # to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
@@ -169,7 +169,8 @@ gdal2_dist=$(gdal2).tar.xz
 gdal3=gdal-3.1.3
 gdal3_dist=$(gdal3).tar.gz
 
-gdal4=gdal-3.1.4
+# gdal4=gdal-3.1.4
+gdal4=gdal-3.2.1
 gdal4_dist=$(gdal4).tar.gz
 
 gridfields=gridfields-1.0.5
@@ -185,7 +186,7 @@ hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 hdf5=hdf5-1.10.5
 hdf5_dist=$(hdf5).tar.bz2
 
-netcdf4=netcdf-c-4.7.3
+netcdf4=netcdf-c-4.7.4
 netcdf4_dist=$(netcdf4).tar.gz
 
 # fits=cfitsio
@@ -467,14 +468,15 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	CPPFLAGS=-I$(proj_prefix)/include \
 	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
 	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-pic \
 	--with-openjpeg --with-proj=$(proj_prefix) \
 	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
-	--disable-all-optional-drivers --with-pic --without-python \
-	--without-netcdf --without-hdf5 --without-hdf4 -without-png \
-	--without-sqlite3 --without-pg --enable-driver-grib \
-	--with-cfitsio=no)
+	 --enable-driver-grib --disable-all-optional-drivers \
+	--without-python --without-netcdf --without-hdf5 --without-hdf4 \
+	--without-png --without-sqlite3 --without-pg --without-cfitsio)
 	echo timestamp > gdal4-configure-stamp
+
+# 	
 
 gdal4-compile-stamp: gdal4-configure-stamp
 	(cd $(gdal4_src) && $(MAKE) $(MFLAGS))
