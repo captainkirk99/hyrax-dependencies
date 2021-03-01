@@ -261,7 +261,7 @@ $(cmake_src)-stamp:
 	echo timestamp > $(cmake_src)-stamp
 
 cmake-configure-stamp:  $(cmake_src)-stamp
-	(cd $(cmake_src) && ./configure --prefix=$(cmake_prefix))
+	(cd $(cmake_src) && ./configure $(defaults) --prefix=$(cmake_prefix))
 	echo timestamp > cmake-configure-stamp
 
 cmake-compile-stamp: cmake-configure-stamp
@@ -325,7 +325,7 @@ $(openjpeg_src)-stamp:
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
 	(cd $(openjpeg_src) \
 	 && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps \
-	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=on)
+	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=OFF)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -415,44 +415,6 @@ proj-really-clean: proj-clean
 .PHONY: proj
 proj: proj-install-stamp
 
-# GDAL2
-gdal2_src=$(src)/$(gdal2)
-gdal2_prefix=$(prefix)/deps
-
-$(gdal2_src)-stamp:
-	tar -xJf downloads/$(gdal2_dist) -C $(src)
-	echo timestamp > $(gdal2_src)-stamp
-
-gdal2-configure-stamp:  $(gdal2_src)-stamp
-	(cd $(gdal2_src) && \
-	./configure $(CONFIGURE_FLAGS) --with-pic --without-python --without-sqlite3 \
-	--without-pg --without-netcdf --prefix=$(gdal2_prefix) --with-openjpeg=$(openjpeg_prefix))
-	echo timestamp > gdal2-configure-stamp
-
-# 	CPPFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.3 $(CPPFLAGS)" 
-#	LDFLAGS="-L$(proj_prefix)/lib/openjpeg-2.3 $(LDFLAGS)" 
-#  	--with-openjpeg=$(openjpeg_prefix))
-
-gdal2-compile-stamp: gdal2-configure-stamp
-	(cd $(gdal2_src) && $(MAKE) $(MFLAGS))
-	echo timestamp > gdal2-compile-stamp
-
-# Force -j1 for install
-gdal2-install-stamp: gdal2-compile-stamp
-	(cd $(gdal2_src) && $(MAKE) $(MFLAGS) -j1 install)
-	echo timestamp > gdal2-install-stamp
-
-gdal2-clean:
-	-rm gdal2-*-stamp
-	-(cd  $(gdal2_src) && $(MAKE) $(MFLAGS) clean)
-
-gdal2-really-clean: gdal2-clean
-	-rm $(gdal2_src)-stamp
-	-rm -rf $(gdal2_src)
-
-.PHONY: gdal2
-gdal2: gdal2-install-stamp
-
 # GDAL4
 gdal4_src=$(src)/$(gdal4)
 gdal4_prefix=$(prefix)/deps
@@ -468,15 +430,13 @@ gdal4-configure-stamp:  $(gdal4_src)-stamp
 	CPPFLAGS=-I$(proj_prefix)/include \
 	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
 	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-pic \
+	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(gdal4_prefix) --with-pic \
 	--with-openjpeg --with-proj=$(proj_prefix) \
 	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
 	 --enable-driver-grib --disable-all-optional-drivers \
 	--without-python --without-netcdf --without-hdf5 --without-hdf4 \
 	--without-png --without-sqlite3 --without-pg --without-cfitsio)
 	echo timestamp > gdal4-configure-stamp
-
-# 	
 
 gdal4-compile-stamp: gdal4-configure-stamp
 	(cd $(gdal4_src) && $(MAKE) $(MFLAGS))
@@ -694,6 +654,7 @@ fits-compile-stamp: fits-configure-stamp
 # Force -j1 for install
 fits-install-stamp: fits-compile-stamp
 	(cd $(fits_src) && $(MAKE) $(MFLAGS) -j1 install)
+	(cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio*.so)
 	echo timestamp > fits-install-stamp
 
 fits-clean:
