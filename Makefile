@@ -14,12 +14,17 @@
 # This was complicating the build on Travis where some parts are present
 # (e.g., cmake).
 
-VERSION = 1.27
+VERSION = 1.28
 
 # If a site.mk file exists in the parent dir, include it. Use this
 # to add site-specific info like values for SQLITE3_LIBS and SQLITE3_CFLAGS,
 # which are needed to build the proj library in some obscure cases.
+
 # jhrg 12/5/20
+# Use this include file to define things to build that are
+# site-specific. Use the Makefile variable 'site-deps.' If
+# the file does not exist, no error is generated.
+site-deps = 
 -include ../hyrax-deps-site.mk
 
 # These options speed up the builds jhrg 12/08/20
@@ -33,18 +38,16 @@ VERSION = 1.27
 #
 # No longer needed - we require c++-11 for all the builds now that
 # CentOS 6 support has ended. jhrg 10/30/20
-ifeq ("$(BUILD_STARE)", "no")
-STARE =
-else
-STARE = stare
-endif
+# ifeq ("$(BUILD_STARE)", "no")
+# STARE =
+# else
+# STARE = stare
+# endif
 
 # I think only OSX needs the icu dependency. jhrg 10/29/20
 .PHONY: $(deps)
-deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4 fits	\
-gdal2 icu stare list-built
-
-# sqlite3 proj gdal4
+deps = $(site-deps) bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 \
+netcdf4 fits sqlite3 proj gdal4 icu stare list-built
 
 # The 'all-static-deps' are the deps we need when all of the handlers are
 # to be statically linked to the dependencies contained in this project - 
@@ -55,25 +58,16 @@ gdal2 icu stare list-built
 # Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
 .PHONY: $(all_static_deps)
-all_static_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5	\
-netcdf4 fits gdal2 stare list-built
-
-# sqlite3 proj gdal4
+all_static_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4	\
+hdfeos hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 # Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
 # as of 9/4/15 and while that distribution has many of the deps, it also
 # lacks some key ones. It's easier to reuse this dependencies project than
 # roll a new one. jhrg 9/4/15
 .PHONY: $(travis_deps)
-travis_deps = bison jpeg openjpeg gridfields hdf4 hdfeos hdf5 netcdf4	\
-fits gdal2 stare list-built
-
-# sqlite3 proj gdal4
-
-# actions_build is used for testing. So named because of the new GitHub
-# Actions workflow. jhrg 12/08/20
-.PHONY: $(actions_build)
-actions_build = bison sqlite3 proj gdal4 list-built
+travis_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4 hdfeos	\
+hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -93,15 +87,13 @@ list-built:
 	@ls -1 *-install-stamp
 	@echo "*** ---------------------------- ***"
 
+# These two rules are here to suppress errors about these automatically-generated
+# rules not existing. jhrg 1/27/21
+.PHONY: list-built-clean
 list-built-clean:
-	@echo
-	@echo "*** I would clean the list stuff if I knew what to do. ***"
-	@echo "*** ---------------------------- ***"
 
+.PHONY: list-built-really-clean
 list-built-really-clean:
-	@echo
-	@echo "*** I would really_clean the list stuff if I knew what to do. ***"
-	@echo "*** ---------------------------- ***"
 
 # Build everything but ICU, as static. Whwen the BES is built and
 # linked against these, the resulting modules will not need their
@@ -155,7 +147,8 @@ bison_dist=$(bison).tar.xz
 jpeg=jpeg-6b
 jpeg_dist=jpegsrc.v6b.tar.gz
 
-openjpeg=openjpeg-2.1.1
+# openjpeg=openjpeg-2.3.1
+openjpeg=openjpeg-2.4.0
 openjpeg_dist=$(openjpeg).tar.gz
 
 sqlite3=sqlite-autoconf-3340000
@@ -176,7 +169,8 @@ gdal2_dist=$(gdal2).tar.xz
 gdal3=gdal-3.1.3
 gdal3_dist=$(gdal3).tar.gz
 
-gdal4=gdal-3.1.4
+# gdal4=gdal-3.1.4
+gdal4=gdal-3.2.1
 gdal4_dist=$(gdal4).tar.gz
 
 gridfields=gridfields-1.0.5
@@ -192,13 +186,13 @@ hdfeos_dist=HDF-EOS2.19v1.00.tar.Z
 hdf5=hdf5-1.10.5
 hdf5_dist=$(hdf5).tar.bz2
 
-netcdf4=netcdf-c-4.7.3
+netcdf4=netcdf-c-4.7.4
 netcdf4_dist=$(netcdf4).tar.gz
 
-fits=cfitsio
-fits_dist=$(fits)3270.tar.gz
-#fits=cfitsio-3.49
-#fits_dist=$(fits).tar.gz
+# fits=cfitsio
+# fits_dist=$(fits)3270.tar.gz
+fits=cfitsio-3.49
+fits_dist=$(fits).tar.gz
 
 icu=icu-3.6
 icu_dist=icu4c-3_6-src.tgz
@@ -267,7 +261,7 @@ $(cmake_src)-stamp:
 	echo timestamp > $(cmake_src)-stamp
 
 cmake-configure-stamp:  $(cmake_src)-stamp
-	(cd $(cmake_src) && ./configure $(defaults) --prefix=$(cmake_prefix))
+	(cd $(cmake_src) && ./configure --prefix=$(cmake_prefix))
 	echo timestamp > cmake-configure-stamp
 
 cmake-compile-stamp: cmake-configure-stamp
@@ -330,7 +324,8 @@ $(openjpeg_src)-stamp:
 
 openjpeg-configure-stamp:  $(openjpeg_src)-stamp
 	(cd $(openjpeg_src) \
-	 && cmake -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=off)
+	 && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=$(prefix)/deps \
+	 -DCMAKE_C_FLAGS="-fPIC -O2" -DBUILD_SHARED_LIBS:bool=on)
 	echo timestamp > openjpeg-configure-stamp
 
 openjpeg-compile-stamp: openjpeg-configure-stamp
@@ -376,7 +371,7 @@ sqlite3-clean:
 	-(cd  $(sqlite3_src) && $(MAKE) $(MFLAGS) uninstall clean)
 
 sqlite3-really-clean: sqlite3-clean
-	-rm $(src)/sqlite3-*-stamp	
+	-rm $(src)/sqlite-*-stamp
 	-rm -rf $(sqlite3_src)
 
 .PHONY: sqlite3
@@ -394,9 +389,11 @@ $(proj_src)-stamp:
 	tar -xzf downloads/$(proj_dist) -C $(src)
 	echo timestamp > $(proj_src)-stamp
 
-proj-configure-stamp:  $(proj_src)-stamp
-	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include" SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
-	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) )
+proj-configure-stamp: $(proj_src)-stamp
+	(cd $(proj_src) && SQLITE3_CFLAGS="-I$(sqlite3_prefix)/include -fPIC" \
+	SQLITE3_LIBS="-L$(sqlite3_prefix)/lib -lsqlite3" \
+	./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(proj_prefix) \
+	--disable-shared)
 	echo timestamp > proj-configure-stamp
 
 proj-compile-stamp: proj-configure-stamp
@@ -467,10 +464,19 @@ $(gdal4_src)-stamp:
 # I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
 gdal4-configure-stamp:  $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
-	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-openjpeg=$(openjpeg_prefix) \
-    --with-proj=$(proj_prefix) --disable-all-optional-drivers --with-pic --without-python \
-    --without-netcdf --without-sqlite3 --without-pg)
+	PKG_CONFIG=$(openjpeg_prefix)/lib/pkgconfig \
+	CPPFLAGS=-I$(proj_prefix)/include \
+	OPENJPEG_CFLAGS="-I$(openjpeg_prefix)/include/openjpeg-2.4" \
+	OPENJPEG_LIBS="-L$(openjpeg_prefix)/lib -lopenjp2" \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-pic \
+	--with-openjpeg --with-proj=$(proj_prefix) \
+	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
+	 --enable-driver-grib --disable-all-optional-drivers \
+	--without-python --without-netcdf --without-hdf5 --without-hdf4 \
+	--without-png --without-sqlite3 --without-pg --without-cfitsio)
 	echo timestamp > gdal4-configure-stamp
+
+# 	
 
 gdal4-compile-stamp: gdal4-configure-stamp
 	(cd $(gdal4_src) && $(MAKE) $(MFLAGS))
