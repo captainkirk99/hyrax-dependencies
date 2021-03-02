@@ -654,7 +654,7 @@ fits-compile-stamp: fits-configure-stamp
 # Force -j1 for install
 fits-install-stamp: fits-compile-stamp
 	(cd $(fits_src) && $(MAKE) $(MFLAGS) -j1 install)
-	(cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio*.so)
+	(cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio.so*)
 	echo timestamp > fits-install-stamp
 
 fits-clean:
