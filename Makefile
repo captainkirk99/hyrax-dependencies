@@ -355,7 +355,8 @@ $(sqlite3_src)-stamp:
 	echo timestamp > $(sqlite3_src)-stamp
 
 sqlite3-configure-stamp:  $(sqlite3_src)-stamp
-	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(sqlite3_prefix) )
+	(cd $(sqlite3_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) \
+	--prefix=$(sqlite3_prefix) --with-pic=yes )
 	echo timestamp > sqlite3-configure-stamp
 
 sqlite3-compile-stamp: sqlite3-configure-stamp
