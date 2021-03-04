@@ -423,11 +423,11 @@ $(gdal4_src)-stamp:
 	tar -xzf downloads/$(gdal4_dist) -C $(src)
 	echo timestamp > $(gdal4_src)-stamp
 
-# I disabled sqlite3 because it was failing on CentOS7. jhrg 12/08/20
+# I disabled sqlite3 because it was failing on CentOS7. 
 gdal4-configure-stamp: $(gdal4_src)-stamp
 	(cd $(gdal4_src) && \
 	CPPFLAGS=-I$(proj_prefix)/include \
-	./configure  --prefix=$(gdal4_prefix) --with-pic \
+	./configure $(CONFIGURE_FLAGS) --prefix=$(gdal4_prefix) --with-pic \
 	--disable-driver-plscenes --disable-driver-elastic --with-proj=$(proj_prefix) \
 	--with-proj-extra-lib-for-test="-L$(prefix)/deps/lib -lsqlite3 -lstdc++" \
 	--without-python --without-netcdf --without-hdf5 --without-hdf4 \
