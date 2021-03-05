@@ -108,7 +108,7 @@ list-built-really-clean:
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
 	for d in $(all_static_deps); \
-		do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
+	    do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
@@ -125,7 +125,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --gzip --file hyrax-dependencies-$(VERSION).tgz \
+	(cd ../ && tar --create --file hyrax-dependencies-$(VERSION).tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
@@ -659,7 +659,8 @@ $(fits_src)-stamp:
 	echo timestamp > $(fits_src)-stamp
 
 fits-configure-stamp:  $(fits_src)-stamp
-	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(fits_prefix))
+	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) \
+	--prefix=$(fits_prefix) --disable-curl)
 	echo timestamp > fits-configure-stamp
 
 fits-compile-stamp: fits-configure-stamp
@@ -669,8 +670,9 @@ fits-compile-stamp: fits-configure-stamp
 # Force -j1 for install
 fits-install-stamp: fits-compile-stamp
 	(cd $(fits_src) && $(MAKE) $(MFLAGS) -j1 install)
-	(cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio.so*)
 	echo timestamp > fits-install-stamp
+
+# (cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio.so*)
 
 fits-clean:
 	-rm fits-*-stamp
