@@ -14,4 +14,8 @@ set -eu
 
 printenv
 
+# Hack - update this container and remove this or switch to the vanilla
+# CentOS 7 container and use the Docker file. jhrg 3/3/21
+yum -y install libpng-devel
+
 (cd /root/hyrax-dependencies && make -j4 for-static-rpm)
