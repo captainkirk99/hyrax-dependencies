@@ -57,17 +57,11 @@ netcdf4 fits sqlite3 proj gdal4 icu stare list-built
 #
 # Removed cmake which breaks CentOS 6 builds and can be gotten from
 # RPMs for both C6 and C7. jhrg 10/10/18
-.PHONY: $(all_static_deps)
-all_static_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4	\
-hdfeos hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
+.PHONY: $(linux_deps)
+linux_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4	\
+hdfeos hdf5 netcdf4 sqlite3 proj gdal4 stare list-built
 
-# Build the dependencies for the Travis CI system. Travis uses Ubuntu 12
-# as of 9/4/15 and while that distribution has many of the deps, it also
-# lacks some key ones. It's easier to reuse this dependencies project than
-# roll a new one. jhrg 9/4/15
-.PHONY: $(travis_deps)
-travis_deps = $(site-deps) bison jpeg openjpeg gridfields hdf4 hdfeos	\
-hdf5 netcdf4 fits sqlite3 proj gdal4 stare list-built
+# fits Removed 3/5/21 because it does not build static-only. jhrg 3/5/21
 
 deps_clean = $(deps:%=%-clean)
 deps_really_clean = $(deps:%=%-really-clean)
@@ -107,12 +101,12 @@ list-built-really-clean:
 # CONFIGURE_FLAGS now set by this target - no need to remember to do
 # it. jhrg 11/29/17.
 for-static-rpm: prefix-set
-	for d in $(all_static_deps); \
-		do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
+	for d in $(linux_deps); \
+	    do CONFIGURE_FLAGS="--disable-shared" $(MAKE) $(MFLAGS) $$d; done
 
 # Made this build statically since these are now used for the deb packages.
 for-travis: prefix-set
-	for d in $(travis_deps); do $(MAKE) $(MFLAGS) $$d; done
+	for d in $(linux_deps); do $(MAKE) $(MFLAGS) $$d; done
 
 for-actions: prefix-set
 	for d in $(actions_build); do $(MAKE) $(MFLAGS) $$d; done
@@ -125,7 +119,7 @@ uninstall: prefix-set
 	-rm -rf $(prefix)/deps/*
 
 dist: really-clean
-	(cd ../ && tar --create --gzip --file hyrax-dependencies-$(VERSION).tgz \
+	(cd ../ && tar --create --file hyrax-dependencies-$(VERSION).tar \
 	 --exclude='.*' --exclude='*~'  --exclude=extra_downloads \
 	 --exclude=scripts --exclude=OSX_Resources hyrax-dependencies)
 
@@ -659,7 +653,8 @@ $(fits_src)-stamp:
 	echo timestamp > $(fits_src)-stamp
 
 fits-configure-stamp:  $(fits_src)-stamp
-	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) --prefix=$(fits_prefix))
+	(cd $(fits_src) && ./configure $(CONFIGURE_FLAGS) $(defaults) \
+	--prefix=$(fits_prefix) --disable-curl)
 	echo timestamp > fits-configure-stamp
 
 fits-compile-stamp: fits-configure-stamp
@@ -669,8 +664,9 @@ fits-compile-stamp: fits-configure-stamp
 # Force -j1 for install
 fits-install-stamp: fits-compile-stamp
 	(cd $(fits_src) && $(MAKE) $(MFLAGS) -j1 install)
-	(cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio.so*)
 	echo timestamp > fits-install-stamp
+
+# (cd $(fits_prefix)/lib && rm -f libcfitsio*.dylib || rm -f libcfitsio.so*)
 
 fits-clean:
 	-rm fits-*-stamp
